@@ -163,14 +163,12 @@ export class AxiosHttpHandler implements HttpHandler {
 		}
 		if (emitter) {
 			// TODO: Unify linting rules across JS repo
-			axiosRequest.onUploadProgress = function(event) {
+			axiosRequest.onUploadProgress = function (event) {
 				emitter.emit(SEND_UPLOAD_PROGRESS_EVENT, event);
-				logger.debug(event);
 			};
 			// TODO: Unify linting rules across JS repo
-			axiosRequest.onDownloadProgress = function(event) {
+			axiosRequest.onDownloadProgress = function (event) {
 				emitter.emit(SEND_DOWNLOAD_PROGRESS_EVENT, event);
-				logger.debug(event);
 			};
 		}
 		// If a cancel token source is passed down from the provider, allows cancellation of in-flight requests

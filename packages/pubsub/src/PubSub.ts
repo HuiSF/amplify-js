@@ -70,7 +70,7 @@ export class PubSubClass {
 	 */
 	constructor(options?: PubSubOptions) {
 		this._options = options ?? {};
-		logger.debug('PubSub Options', this._options);
+
 		this._pluggables = [];
 		this.subscribe = this.subscribe.bind(this);
 	}
@@ -87,7 +87,6 @@ export class PubSubClass {
 	 */
 	configure(options: PubSubOptions) {
 		const opt = options ? options.PubSub || options : {};
-		logger.debug('configure PubSub', { opt });
 
 		this._options = Object.assign({}, this._options, opt);
 
@@ -168,8 +167,6 @@ export class PubSubClass {
 				'Subscriptions are not supported for Server-Side Rendering (SSR)'
 			);
 		}
-
-		logger.debug('subscribe options', options);
 
 		const providers = this.getProviders(options);
 

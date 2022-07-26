@@ -7,7 +7,6 @@ export abstract class AbstractPredictionsProvider {
 	protected _config: PredictionsOptions;
 
 	configure(config: PredictionsOptions) {
-		logger.debug('configure AbstractPredictionsProvider', { config });
 		this._config = config;
 		return config;
 	}

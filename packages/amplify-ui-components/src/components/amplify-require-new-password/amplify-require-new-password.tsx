@@ -169,13 +169,11 @@ export class AmplifyRequireNewPassword {
 				this.requiredAttributes
 			);
 
-			logger.debug('complete new password', user);
 			switch (user.challengeName) {
 				case ChallengeName.SMSMFA:
 					this.handleAuthStateChange(AuthState.ConfirmSignIn, user);
 					break;
 				case ChallengeName.MFASetup:
-					logger.debug('TOTP setup', user.challengeParam);
 					this.handleAuthStateChange(AuthState.TOTPSetup, user);
 					break;
 				default:

@@ -53,7 +53,7 @@ export const getStorageObject = async (
 
 	try {
 		const src = await Storage.get(key, { level, track, identityId });
-		logger.debug('Storage image get', src);
+
 		return src;
 	} catch (error) {
 		throw new Error(error);
@@ -94,7 +94,7 @@ export const getTextSource = async (
 			track,
 			identityId,
 		});
-		logger.debug(textSrc);
+
 		const text = (await readFileAsync(textSrc['Body'] as Blob)) as string;
 		return text;
 	} catch (error) {
@@ -120,7 +120,6 @@ export const putStorageObject = async (
 			level,
 			track,
 		});
-		logger.debug('Upload data', data);
 	} catch (error) {
 		throw new Error(error);
 	}

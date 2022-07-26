@@ -205,7 +205,6 @@ class MutationProcessor {
 			}
 
 			if (result === undefined) {
-				logger.debug('done retrying');
 				await this.storage.runExclusive(async storage => {
 					await this.outbox.dequeue(storage);
 				});

@@ -93,7 +93,7 @@ export class AnalyticsClass {
 	 */
 	public configure(config?) {
 		if (!config) return this._config;
-		logger.debug('configure Analytics', config);
+
 		const amplifyConfig = Parser.parseMobilehubConfig(config);
 		this._config = Object.assign(
 			{},
@@ -135,7 +135,7 @@ export class AnalyticsClass {
 			null,
 			`The Analytics category has been configured successfully`
 		);
-		logger.debug('current configuration', this._config);
+
 		return this._config;
 	}
 
@@ -170,7 +170,6 @@ export class AnalyticsClass {
 			}
 		}
 
-		logger.debug('No plugin found with providerName', providerName);
 		return null;
 	}
 
@@ -188,7 +187,6 @@ export class AnalyticsClass {
 		}
 
 		if (idx === this._pluggables.length) {
-			logger.debug('No plugin found with providerName', providerName);
 			return;
 		} else {
 			this._pluggables.splice(idx, idx + 1);
@@ -285,7 +283,6 @@ export class AnalyticsClass {
 
 	private _sendEvent(params: { event: AnalyticsEvent; provider?: string }) {
 		if (this._disabled) {
-			logger.debug('Analytics has been disabled');
 			return Promise.resolve();
 		}
 
@@ -315,7 +312,6 @@ export class AnalyticsClass {
 	);
 	public autoTrack(trackerType: TrackerTypes, opts: { [key: string]: any }) {
 		if (!trackers[trackerType]) {
-			logger.debug('invalid tracker type');
 			return;
 		}
 
@@ -341,7 +337,6 @@ let authConfigured = false;
 let analyticsConfigured = false;
 const listener = capsule => {
 	const { channel, payload } = capsule;
-	logger.debug('on hub capsule ' + channel, payload);
 
 	switch (channel) {
 		case 'auth':
@@ -371,9 +366,7 @@ const storageEvent = payload => {
 				attributes: attrs,
 				metrics,
 			})
-			.catch(e => {
-				logger.debug('Failed to send the storage event automatically', e);
-			});
+			.catch(e => {});
 	}
 };
 
@@ -431,9 +424,7 @@ const analyticsEvent = payload => {
 const sendEvents = () => {
 	const config = _instance.configure();
 	if (!endpointUpdated && config['autoSessionRecord']) {
-		_instance.updateEndpoint({ immediate: true }).catch(e => {
-			logger.debug('Failed to update the endpoint', e);
-		});
+		_instance.updateEndpoint({ immediate: true }).catch(e => {});
 		endpointUpdated = true;
 	}
 	_instance.autoTrack('session', {

@@ -15,15 +15,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { Auth, I18n, Logger } from 'aws-amplify';
 import AuthPiece, { IAuthPieceProps, IAuthPieceState } from './AuthPiece';
-import {
-	AmplifyButton,
-	FormField,
-	LinkCell,
-	Header,
-	ErrorRow,
-	SignedOutMessage,
-	Wrapper,
-} from '../AmplifyUI';
+import { AmplifyButton, FormField, LinkCell, Header, ErrorRow, SignedOutMessage, Wrapper } from '../AmplifyUI';
 import { AmplifyThemeType } from '../AmplifyTheme';
 import TEST_ID from '../AmplifyTestIDs';
 import { setTestId } from '../Utils';
@@ -57,28 +49,24 @@ export default class SignIn extends AuthPiece<ISignInProps, ISignInState> {
 		const { password, hasPendingSignIn } = this.state;
 
 		if (hasPendingSignIn) {
-			logger.debug('Previous sign in attempt active');
 			return;
 		}
 
 		this.setState({ hasPendingSignIn: true });
 		const username = this.getUsernameFromInput() || '';
-		logger.debug('Sign In for ' + username);
+
 		await Auth.signIn(username, password)
-			.then(user => {
-				logger.debug(user);
+			.then((user) => {
 				if (user.challengeName === 'SMS_MFA') {
 					this.changeState('confirmSignIn', user);
 				} else if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
-					logger.debug('require new password', user.challengeParam);
 					this.changeState('requireNewPassword', user);
 				} else {
 					this.checkContact(user);
 				}
 			})
-			.catch(err => {
+			.catch((err) => {
 				if (err.code === 'PasswordResetRequiredException') {
-					logger.debug('the user requires a new password');
 					this.changeState('forgotPassword', username);
 				} else {
 					this.error(err);
@@ -93,17 +81,14 @@ export default class SignIn extends AuthPiece<ISignInProps, ISignInState> {
 			<Wrapper>
 				<View style={theme.section}>
 					<View>
-						<Header
-							theme={theme}
-							testID={TEST_ID.AUTH.SIGN_IN_TO_YOUR_ACCOUNT_TEXT}
-						>
+						<Header theme={theme} testID={TEST_ID.AUTH.SIGN_IN_TO_YOUR_ACCOUNT_TEXT}>
 							{I18n.get('Sign in to your account')}
 						</Header>
 						<View style={theme.sectionBody}>
 							{this.renderUsernameField(theme)}
 							<FormField
 								theme={theme}
-								onChangeText={text => this.setState({ password: text })}
+								onChangeText={(text) => this.setState({ password: text })}
 								label={I18n.get('Password')}
 								placeholder={I18n.get('Enter your password')}
 								secureTextEntry={true}
@@ -114,10 +99,7 @@ export default class SignIn extends AuthPiece<ISignInProps, ISignInState> {
 								text={I18n.get('Sign In').toUpperCase()}
 								theme={theme}
 								onPress={this.signIn}
-								disabled={
-									!!(!this.getUsernameFromInput() && password) ||
-									hasPendingSignIn
-								}
+								disabled={!!(!this.getUsernameFromInput() && password) || hasPendingSignIn}
 								{...setTestId(TEST_ID.AUTH.SIGN_IN_BUTTON)}
 							/>
 						</View>
@@ -129,11 +111,7 @@ export default class SignIn extends AuthPiece<ISignInProps, ISignInState> {
 							>
 								{I18n.get('Forgot Password')}
 							</LinkCell>
-							<LinkCell
-								theme={theme}
-								onPress={() => this.changeState('signUp')}
-								testID={TEST_ID.AUTH.SIGN_UP_BUTTON}
-							>
+							<LinkCell theme={theme} onPress={() => this.changeState('signUp')} testID={TEST_ID.AUTH.SIGN_UP_BUTTON}>
 								{I18n.get('Sign Up')}
 							</LinkCell>
 						</View>

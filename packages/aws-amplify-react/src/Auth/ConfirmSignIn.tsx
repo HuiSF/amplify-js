@@ -91,7 +91,6 @@ export class ConfirmSignIn extends AuthPiece<
 	}
 
 	componentDidUpdate() {
-		// logger.debug('component did update with props', this.props);
 		const user = this.props.authData;
 		const mfaType =
 			user && user.challengeName === 'SOFTWARE_TOKEN_MFA' ? 'TOTP' : 'SMS';

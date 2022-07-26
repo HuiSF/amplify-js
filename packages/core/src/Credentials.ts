@@ -82,7 +82,6 @@ export class CredentialsClass {
 	}
 
 	public get() {
-		logger.debug('getting credentials');
 		return this._pickupCredentials();
 	}
 
@@ -92,25 +91,18 @@ export class CredentialsClass {
 	}
 
 	private _pickupCredentials() {
-		logger.debug('picking up credentials');
 		if (!this._gettingCredPromise || !this._gettingCredPromise.isPending()) {
-			logger.debug('getting new cred promise');
 			this._gettingCredPromise = makeQuerablePromise(this._keepAlive());
 		} else {
-			logger.debug('getting old cred promise');
 		}
 		return this._gettingCredPromise;
 	}
 
 	private async _keepAlive() {
-		logger.debug('checking if credentials exists and not expired');
 		const cred = this._credentials;
 		if (cred && !this._isExpired(cred) && !this._isPastTTL()) {
-			logger.debug('credentials not changed and not expired, directly return');
 			return Promise.resolve(cred);
 		}
-
-		logger.debug('need to get a new credential or refresh the existing one');
 
 		// Some use-cases don't require Auth for signing in, but use Credentials for guest users (e.g. Analytics)
 		// Prefer locally scoped `Auth`, but fallback to registered `Amplify.Auth` global otherwise.
@@ -121,7 +113,6 @@ export class CredentialsClass {
 		}
 
 		if (!this._isExpired(cred) && this._isPastTTL()) {
-			logger.debug('ttl has passed but token is not yet expired');
 			try {
 				const user = await Auth.currentUserPoolUser();
 				const session = await Auth.currentSession();
@@ -134,14 +125,12 @@ export class CredentialsClass {
 				await refreshRequest; // note that rejections will be caught and handled in the catch block.
 			} catch (err) {
 				// should not throw because user might just be on guest access or is authenticated through federation
-				logger.debug('Error attempting to refreshing the session', err);
 			}
 		}
 		return Auth.currentUserCredentials();
 	}
 
 	public refreshFederatedToken(federatedInfo) {
-		logger.debug('Getting federated credentials');
 		const { provider, user, token, identity_id } = federatedInfo;
 		let { expires_at } = federatedInfo;
 
@@ -152,10 +141,10 @@ export class CredentialsClass {
 				: expires_at;
 
 		const that = this;
-		logger.debug('checking if federated jwt token expired');
+
 		if (expires_at > new Date().getTime()) {
 			// if not expired
-			logger.debug('token not expired');
+
 			return this._setCredentialsFromFederation({
 				provider,
 				token,
@@ -169,14 +158,12 @@ export class CredentialsClass {
 				that._refreshHandlers[provider] &&
 				typeof that._refreshHandlers[provider] === 'function'
 			) {
-				logger.debug('getting refreshed jwt token from federation provider');
 				return this._providerRefreshWithRetry({
 					refreshHandler: that._refreshHandlers[provider],
 					provider,
 					user,
 				});
 			} else {
-				logger.debug('no refresh handler for provider:', provider);
 				this.clear();
 				return Promise.reject('no refresh handler for provider');
 			}
@@ -189,7 +176,6 @@ export class CredentialsClass {
 		// return NonRetryableError to break out of jitteredExponentialRetry
 		return jitteredExponentialRetry(refreshHandler, [], MAX_DELAY_MS)
 			.then(data => {
-				logger.debug('refresh federated token sucessfully', data);
 				return this._setCredentialsFromFederation({
 					provider,
 					token: data.token,
@@ -207,17 +193,15 @@ export class CredentialsClass {
 					this.clear();
 				}
 
-				logger.debug('refresh federated token failed', e);
 				return Promise.reject('refreshing federation token failed: ' + e);
 			});
 	}
 
 	private _isExpired(credentials): boolean {
 		if (!credentials) {
-			logger.debug('no credentials for expiration check');
 			return true;
 		}
-		logger.debug('are these credentials expired?', credentials);
+
 		const ts = Date.now();
 
 		/* returns date object.
@@ -232,7 +216,6 @@ export class CredentialsClass {
 	}
 
 	private async _setCredentialsForGuest() {
-		logger.debug('setting credentials for guest');
 		const { identityPoolId, region, mandatorySignIn } = this._config;
 		if (mandatorySignIn) {
 			return Promise.reject(
@@ -250,13 +233,12 @@ export class CredentialsClass {
 		}
 
 		if (!region) {
-			logger.debug('region is not configured for getting the credentials');
 			return Promise.reject(
 				'region is not configured for getting the credentials'
 			);
 		}
 
-		const identityId = this._identityId = await this._getGuestIdentityId();
+		const identityId = (this._identityId = await this._getGuestIdentityId());
 
 		const cognitoClient = new CognitoIdentityClient({
 			region,
@@ -312,7 +294,6 @@ export class CredentialsClass {
 					e.name === 'ResourceNotFoundException' &&
 					e.message === `Identity '${identityId}' not found.`
 				) {
-					logger.debug('Failed to load guest credentials');
 					await this._removeGuestIdentityId();
 
 					const credentialsProvider: CredentialProvider = async () => {
@@ -365,11 +346,9 @@ export class CredentialsClass {
 
 		const { identityPoolId, region } = this._config;
 		if (!identityPoolId) {
-			logger.debug('No Cognito Federated Identity pool provided');
 			return Promise.reject('No Cognito Federated Identity pool provided');
 		}
 		if (!region) {
-			logger.debug('region is not configured for getting the credentials');
 			return Promise.reject(
 				'region is not configured for getting the credentials'
 			);
@@ -400,15 +379,12 @@ export class CredentialsClass {
 	}
 
 	private _setCredentialsFromSession(session): Promise<ICredentials> {
-		logger.debug('set credentials from session');
 		const idToken = session.getIdToken().getJwtToken();
 		const { region, userPoolId, identityPoolId } = this._config;
 		if (!identityPoolId) {
-			logger.debug('No Cognito Federated Identity pool provided');
 			return Promise.reject('No Cognito Federated Identity pool provided');
 		}
 		if (!region) {
-			logger.debug('region is not configured for getting the credentials');
 			return Promise.reject(
 				'region is not configured for getting the credentials'
 			);
@@ -446,19 +422,14 @@ export class CredentialsClass {
 			}
 
 			const {
-				Credentials: {
-					AccessKeyId,
-					Expiration,
-					SecretKey,
-					SessionToken,
-				},
+				Credentials: { AccessKeyId, Expiration, SecretKey, SessionToken },
 				// single source of truth for the primary identity associated with the logins
 				// only if a guest identity is used for a first-time user, that guest identity will become its primary identity
 				IdentityId: primaryIdentityId,
 			} = await cognitoClient.send(
 				new GetCredentialsForIdentityCommand({
-				  IdentityId: guestIdentityId || generatedOrRetrievedIdentityId,
-				  Logins: logins,
+					IdentityId: guestIdentityId || generatedOrRetrievedIdentityId,
+					Logins: logins,
 				})
 			);
 
@@ -466,9 +437,8 @@ export class CredentialsClass {
 			if (guestIdentityId) {
 				// if guestIdentity is found and used by GetCredentialsForIdentity
 				// it will be linked to the logins provided, and disqualified as an unauth identity
-				logger.debug(`The guest identity ${guestIdentityId} has been successfully linked to the logins`);
+
 				if (guestIdentityId === primaryIdentityId) {
-					logger.debug(`The guest identity ${guestIdentityId} has become the primary identity`);
 				}
 				// remove it from local storage to avoid being used as a guest Identity by _setCredentialsForGuest
 				await this._removeGuestIdentityId();
@@ -481,7 +451,7 @@ export class CredentialsClass {
 				sessionToken: SessionToken,
 				expiration: Expiration,
 				identityId: primaryIdentityId,
-			  };
+			};
 		};
 
 		const credentials = credentialsProvider().catch(async err => {
@@ -501,7 +471,6 @@ export class CredentialsClass {
 		return new Promise((res, rej) => {
 			credentials
 				.then(async credentials => {
-					logger.debug('Load credentials successfully', credentials);
 					if (this._identityId && !credentials.identityId) {
 						credentials['identityId'] = this._identityId;
 					}
@@ -527,9 +496,7 @@ export class CredentialsClass {
 									identity_id,
 								})
 							);
-						} catch (e) {
-							logger.debug('Failed to put federated info into auth storage', e);
-						}
+						} catch (e) {}
 					}
 					if (source === 'guest') {
 						await this._setGuestIdentityId(credentials.identityId);
@@ -539,8 +506,6 @@ export class CredentialsClass {
 				})
 				.catch(err => {
 					if (err) {
-						logger.debug('Failed to load credentials', credentials);
-						logger.debug('Error loading credentials', err);
 						rej(err);
 						return;
 					}
@@ -556,7 +521,6 @@ export class CredentialsClass {
 		} else if (source === 'guest') {
 			return this._setCredentialsForGuest();
 		} else {
-			logger.debug('no source specified for setting credentials');
 			return Promise.reject('invalid source');
 		}
 	}
@@ -564,7 +528,7 @@ export class CredentialsClass {
 	public async clear() {
 		this._credentials = null;
 		this._credentials_source = null;
-		logger.debug('removing aws-amplify-federatedInfo from storage');
+
 		this._storage.removeItem('aws-amplify-federatedInfo');
 	}
 
@@ -576,9 +540,7 @@ export class CredentialsClass {
 			return this._storage.getItem(
 				this._getCognitoIdentityIdStorageKey(identityPoolId)
 			);
-		} catch (e) {
-			logger.debug('Failed to get the cached guest identityId', e);
-		}
+		} catch (e) {}
 	}
 
 	private async _setGuestIdentityId(identityId: string) {
@@ -587,11 +549,9 @@ export class CredentialsClass {
 			await this._storageSync;
 			this._storage.setItem(
 				this._getCognitoIdentityIdStorageKey(identityPoolId),
-				identityId,
+				identityId
 			);
-		} catch (e) {
-			logger.debug('Failed to cache guest identityId', e);
-		}
+		} catch (e) {}
 	}
 
 	private async _removeGuestIdentityId() {

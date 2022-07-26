@@ -110,7 +110,6 @@ export class AWSS3Provider implements StorageProvider {
 				this._storage.removeItem(UPLOADS_STORAGE_KEY);
 			}
 		});
-		logger.debug('Storage Options', this._config);
 	}
 
 	/**
@@ -133,12 +132,10 @@ export class AWSS3Provider implements StorageProvider {
 	 * @return {Object} - Current configuration
 	 */
 	public configure(config?): object {
-		logger.debug('configure Storage', config);
 		if (!config) return this._config;
 		const amplifyConfig = Parser.parseMobilehubConfig(config);
 		this._config = Object.assign({}, this._config, amplifyConfig.Storage);
 		if (!this._config.bucket) {
-			logger.debug('Do not have bucket yet');
 		}
 		return this._config;
 	}
@@ -289,7 +286,6 @@ export class AWSS3Provider implements StorageProvider {
 		const destPrefix = this._prefix({ ...opt, level: destLevel });
 		const finalSrcKey = `${bucket}/${srcPrefix}${srcKey}`;
 		const finalDestKey = `${destPrefix}${destKey}`;
-		logger.debug(`copying ${finalSrcKey} to ${finalDestKey}`);
 
 		const params: CopyObjectCommandInput = {
 			Bucket: bucket,
@@ -389,7 +385,6 @@ export class AWSS3Provider implements StorageProvider {
 		const final_key = prefix + key;
 		const emitter = new events.EventEmitter();
 		const s3 = this._createNewS3Client(opt, emitter);
-		logger.debug('get ' + key + ' from ' + final_key);
 
 		const params: GetObjectCommandInput = {
 			Bucket: bucket,
@@ -605,7 +600,6 @@ export class AWSS3Provider implements StorageProvider {
 			}
 
 			return uploader.upload().then(response => {
-				logger.debug('upload result', response);
 				dispatchStorageEvent(
 					track,
 					'upload',
@@ -648,7 +642,6 @@ export class AWSS3Provider implements StorageProvider {
 		const prefix = this._prefix(opt);
 		const final_key = prefix + key;
 		const s3 = this._createNewS3Client(opt);
-		logger.debug('remove ' + key + ' from ' + final_key);
 
 		const params: DeleteObjectCommandInput = {
 			Bucket: bucket,
@@ -700,7 +693,6 @@ export class AWSS3Provider implements StorageProvider {
 		const prefix = this._prefix(opt);
 		const final_path = prefix + path;
 		const s3 = this._createNewS3Client(opt);
-		logger.debug('list ' + path + ' from ' + final_path);
 
 		const params = {
 			Bucket: bucket,
@@ -730,7 +722,7 @@ export class AWSS3Provider implements StorageProvider {
 				null,
 				`${list.length} items returned from list operation`
 			);
-			logger.debug('list', list);
+
 			return list;
 		} catch (error) {
 			logger.warn('list error', error);
@@ -750,7 +742,7 @@ export class AWSS3Provider implements StorageProvider {
 			const credentials = await Credentials.get();
 			if (!credentials) return false;
 			const cred = Credentials.shear(credentials);
-			logger.debug('set credentials for storage', cred);
+
 			this._config.credentials = cred;
 
 			return true;

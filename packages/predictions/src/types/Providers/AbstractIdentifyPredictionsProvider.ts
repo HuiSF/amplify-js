@@ -24,13 +24,10 @@ export abstract class AbstractIdentifyPredictionsProvider extends AbstractPredic
 		IdentifyTextOutput | IdentifyLabelsOutput | IdentifyEntitiesOutput
 	> {
 		if (isIdentifyTextInput(input)) {
-			logger.debug('identifyText');
 			return this.identifyText(input);
 		} else if (isIdentifyLabelsInput(input)) {
-			logger.debug('identifyLabels');
 			return this.identifyLabels(input);
 		} else if (isIdentifyEntitiesInput(input)) {
-			logger.debug('identifyEntities');
 			return this.identifyEntities(input);
 		}
 	}

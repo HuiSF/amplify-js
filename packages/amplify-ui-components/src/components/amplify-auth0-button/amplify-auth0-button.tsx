@@ -32,11 +32,8 @@ export class AmplifyAuth0Button {
 		const { config = oauth.auth0 } = this;
 
 		if (!config) {
-			logger.debug('Auth0 is not configured');
 			return;
 		}
-
-		logger.debug('auth0 configuration', config);
 
 		if (!this._auth0) {
 			this._auth0 = new window['auth0'].WebAuth(config);
@@ -44,12 +41,10 @@ export class AmplifyAuth0Button {
 
 		this._auth0.parseHash((err, authResult) => {
 			if (err) {
-				logger.debug('Failed to parse the url for Auth0', err);
 				return;
 			}
 
 			if (!authResult) {
-				logger.debug('Auth0 found no authResult in hash');
 				return;
 			}
 
@@ -64,15 +59,12 @@ export class AmplifyAuth0Button {
 
 			try {
 				localStorage.setItem(AUTH_SOURCE_KEY, JSON.stringify(payload));
-			} catch (e) {
-				logger.debug('Failed to cache auth source into localStorage', e);
-			}
+			} catch (e) {}
 
 			this._auth0.client.userInfo(authResult.accessToken, async (err, user) => {
 				let username = undefined;
 				let email = undefined;
 				if (err) {
-					logger.debug('Failed to get the user info', err);
 				} else {
 					username = user.name;
 					email = user.email;

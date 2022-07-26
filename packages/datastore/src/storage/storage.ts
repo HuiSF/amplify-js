@@ -78,7 +78,6 @@ class StorageClass implements StorageFacade {
 			await this.initialized;
 			return;
 		}
-		logger.debug('Starting Storage');
 
 		let resolve: (value?: void | PromiseLike<void>) => void;
 		let reject: (value?: void | PromiseLike<void>) => void;

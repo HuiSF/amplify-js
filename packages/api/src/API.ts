@@ -56,7 +56,6 @@ export class APIClass {
 		this._options = options;
 		this._restApi = new RestAPIClass(options);
 		this._graphqlApi = new GraphQLAPIClass(options);
-		logger.debug('API Options', this._options);
 	}
 
 	public getModuleName() {

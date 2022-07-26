@@ -38,7 +38,6 @@ export class RestAPIClass {
 	 */
 	constructor(options) {
 		this._options = options;
-		logger.debug('API Options', this._options);
 	}
 
 	public getModuleName() {
@@ -53,7 +52,6 @@ export class RestAPIClass {
 	configure(options) {
 		const { API = {}, ...otherOptions } = options || {};
 		let opt = { ...otherOptions, ...API };
-		logger.debug('configure Rest API', { opt });
 
 		if (opt['aws_project_region']) {
 			if (opt['aws_cloud_logic_custom']) {
@@ -99,7 +97,6 @@ export class RestAPIClass {
 	 * @return - A promise of true if Success
 	 */
 	createInstance() {
-		logger.debug('create Rest API instance');
 		this._api = new RestClient(this._options);
 
 		// Share Amplify instance with client for SSR

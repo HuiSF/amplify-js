@@ -42,24 +42,22 @@ export default class S3Image extends Component<IS3ImageProps, IS3ImageState> {
 	getImageSource() {
 		const { imgKey, level } = this.props;
 		Storage.get(imgKey, { level: level ? level : 'public' })
-			.then(url => {
-				logger.debug(url);
+			.then((url) => {
 				this.setState({
 					src: { uri: url },
 				});
 			})
-			.catch(err => logger.warn(err));
+			.catch((err) => logger.warn(err));
 	}
 
 	load() {
 		const { imgKey, body, contentType, level } = this.props;
 		if (!imgKey) {
-			logger.debug('empty imgKey');
 			return;
 		}
 
 		const that = this;
-		logger.debug('loading ' + imgKey + '...');
+
 		if (body) {
 			const type = contentType ? contentType : 'binary/octet-stream';
 			const opt = {
@@ -68,11 +66,10 @@ export default class S3Image extends Component<IS3ImageProps, IS3ImageState> {
 			};
 			const ret = Storage.put(imgKey, body, opt);
 			ret
-				.then(data => {
-					logger.debug(data);
+				.then((data) => {
 					that.getImageSource();
 				})
-				.catch(err => logger.warn(err));
+				.catch((err) => logger.warn(err));
 		} else {
 			that.getImageSource();
 		}
@@ -83,10 +80,7 @@ export default class S3Image extends Component<IS3ImageProps, IS3ImageState> {
 	}
 
 	componentDidUpdate(prevProps: IS3ImageProps) {
-		if (
-			prevProps.imgKey !== this.props.imgKey ||
-			prevProps.body !== this.props.body
-		) {
+		if (prevProps.imgKey !== this.props.imgKey || prevProps.body !== this.props.body) {
 			this.load();
 		}
 	}
@@ -99,11 +93,7 @@ export default class S3Image extends Component<IS3ImageProps, IS3ImageState> {
 
 		const { style, resizeMode } = this.props;
 		const theme = this.props.theme || AmplifyTheme;
-		const photoStyle = Object.assign(
-			{},
-			StyleSheet.flatten(theme.photo),
-			style
-		);
+		const photoStyle = Object.assign({}, StyleSheet.flatten(theme.photo), style);
 
 		return <Image source={src} resizeMode={resizeMode} style={photoStyle} />;
 	}

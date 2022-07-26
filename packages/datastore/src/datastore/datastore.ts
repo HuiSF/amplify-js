@@ -749,7 +749,6 @@ class DataStore {
 
 	start = async (): Promise<void> => {
 		if (this.initialized === undefined) {
-			logger.debug('Starting DataStore');
 			this.initialized = new Promise((res, rej) => {
 				this.initResolve = res;
 				this.initReject = rej;
@@ -777,8 +776,6 @@ class DataStore {
 		const { aws_appsync_graphqlEndpoint } = this.amplifyConfig;
 
 		if (aws_appsync_graphqlEndpoint) {
-			logger.debug('GraphQL endpoint available', aws_appsync_graphqlEndpoint);
-
 			this.syncPredicates = await this.processSyncExpressions();
 
 			this.sync = new SyncEngine(

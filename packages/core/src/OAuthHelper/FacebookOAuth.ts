@@ -18,12 +18,10 @@ const logger = new Logger('CognitoCredentials');
 
 const waitForInit = new Promise((res, rej) => {
 	if (!browserOrNode().isBrowser) {
-		logger.debug('not in the browser, directly resolved');
 		return res();
 	}
 	const fb = window['FB'];
 	if (fb) {
-		logger.debug('FB SDK already loaded');
 		return res();
 	} else {
 		setTimeout(() => {
@@ -42,10 +40,8 @@ export class FacebookOAuth {
 
 	public async refreshFacebookToken() {
 		if (!this.initialized) {
-			logger.debug('need to wait for the Facebook SDK loaded');
 			await waitForInit;
 			this.initialized = true;
-			logger.debug('finish waiting');
 		}
 
 		return this._refreshFacebookTokenImpl();
@@ -56,7 +52,7 @@ export class FacebookOAuth {
 		if (browserOrNode().isBrowser) fb = window['FB'];
 		if (!fb) {
 			const errorMessage = 'no fb sdk available';
-			logger.debug(errorMessage);
+
 			return Promise.reject(new NonRetryableError(errorMessage));
 		}
 
@@ -66,7 +62,7 @@ export class FacebookOAuth {
 					if (!fbResponse || !fbResponse.authResponse) {
 						const errorMessage =
 							'no response from facebook when refreshing the jwt token';
-						logger.debug(errorMessage);
+
 						// There is no definitive indication for a network error in
 						// fbResponse, so we are treating it as an invalid token.
 						rej(new NonRetryableError(errorMessage));
@@ -77,7 +73,7 @@ export class FacebookOAuth {
 						const expires_at = expiresIn * 1000 + date.getTime();
 						if (!accessToken) {
 							const errorMessage = 'the jwtToken is undefined';
-							logger.debug(errorMessage);
+
 							rej(new NonRetryableError(errorMessage));
 						}
 						res({

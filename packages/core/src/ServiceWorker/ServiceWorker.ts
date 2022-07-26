@@ -42,7 +42,7 @@ export class ServiceWorkerClass {
 	// The AWS Amplify logger
 	private _logger: Logger = new Logger('ServiceWorker');
 
-	constructor() { }
+	constructor() {}
 
 	/**
 	 * Get the currently active service worker
@@ -64,8 +64,6 @@ export class ServiceWorkerClass {
 	 *	- reject(Error)
 	 **/
 	register(filePath: string = '/service-worker.js', scope: string = '/') {
-		this._logger.debug(`registering ${filePath}`);
-		this._logger.debug(`registering service worker with scope ${scope}`);
 		return new Promise((resolve, reject) => {
 			if (navigator && 'serviceWorker' in navigator) {
 				navigator.serviceWorker
@@ -88,7 +86,6 @@ export class ServiceWorkerClass {
 						return resolve(registration);
 					})
 					.catch(error => {
-						this._logger.debug(`Service Worker Registration Failed ${error}`);
 						return reject(error);
 					});
 			} else {
@@ -121,7 +118,6 @@ export class ServiceWorkerClass {
 						);
 						resolve(subscription);
 					} else {
-						this._logger.debug(`User is NOT subscribed to push`);
 						return this._registration.pushManager
 							.subscribe({
 								userVisibleOnly: true,
@@ -187,7 +183,7 @@ export class ServiceWorkerClass {
 	_setupListeners() {
 		this._serviceWorker.addEventListener('statechange', event => {
 			const currentState = this._serviceWorker.state;
-			this._logger.debug(`ServiceWorker statechange: ${currentState}`);
+
 			if (Amplify.Analytics && typeof Amplify.Analytics.record === 'function') {
 				Amplify.Analytics.record({
 					name: 'ServiceWorker',
@@ -197,9 +193,7 @@ export class ServiceWorkerClass {
 				});
 			}
 		});
-		this._serviceWorker.addEventListener('message', event => {
-			this._logger.debug(`ServiceWorker message event: ${event}`);
-		});
+		this._serviceWorker.addEventListener('message', event => {});
 	}
 }
 

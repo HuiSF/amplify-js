@@ -44,7 +44,6 @@ export class AmplifyFederatedSignIn {
 
 	render() {
 		if (!this.federated) {
-			logger.debug('federated prop is empty. show nothing');
 			logger.debug(
 				'federated={google_client_id: , facebook_app_id: , amazon_client_id}'
 			);
@@ -55,8 +54,6 @@ export class AmplifyFederatedSignIn {
 		if (!Object.values(AuthState).includes(this.authState)) {
 			return null;
 		}
-
-		logger.debug('federated Config is', this.federated);
 
 		return (
 			<amplify-form-section data-test="federated-sign-in-section">

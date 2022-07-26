@@ -18,7 +18,7 @@ const logger = new Logger('DeviceInfo');
 
 export const clientInfo = () => {
 	const dim = Dimensions.get('screen');
-	logger.debug(Platform, dim);
+
 	const OS = 'ios';
 	const { Version } = Platform;
 	const { make, model } = dimToMake(dim);

@@ -141,7 +141,7 @@ export class AuthClass {
 
 	configure(config?) {
 		if (!config) return this._config || {};
-		logger.debug('configure Auth');
+
 		const conf = Object.assign(
 			{},
 			this._config,
@@ -356,9 +356,6 @@ export class AuthClass {
 			return this.rejectAuthError(AuthErrorTypes.EmptyPassword);
 		}
 
-		logger.debug('signUp attrs:', attributes);
-		logger.debug('signUp validation data:', validationData);
-
 		return new Promise((resolve, reject) => {
 			this.userPool.signUp(
 				username,
@@ -532,15 +529,12 @@ export class AuthClass {
 		const that = this;
 		return {
 			onSuccess: async session => {
-				logger.debug(session);
 				delete user['challengeName'];
 				delete user['challengeParam'];
 				try {
 					await this.Credentials.clear();
 					const cred = await this.Credentials.set(session, 'session');
-					logger.debug('succeed to get cognito credentials', cred);
 				} catch (e) {
-					logger.debug('cannot get cognito credentials', e);
 				} finally {
 					try {
 						// In order to get user attributes and MFA methods
@@ -560,7 +554,6 @@ export class AuthClass {
 				}
 			},
 			onFailure: err => {
-				logger.debug('signIn failure', err);
 				dispatchAuthEvent(
 					'signIn_failure',
 					err,
@@ -569,25 +562,21 @@ export class AuthClass {
 				reject(err);
 			},
 			customChallenge: challengeParam => {
-				logger.debug('signIn custom challenge answer required');
 				user['challengeName'] = 'CUSTOM_CHALLENGE';
 				user['challengeParam'] = challengeParam;
 				resolve(user);
 			},
 			mfaRequired: (challengeName, challengeParam) => {
-				logger.debug('signIn MFA required');
 				user['challengeName'] = challengeName;
 				user['challengeParam'] = challengeParam;
 				resolve(user);
 			},
 			mfaSetup: (challengeName, challengeParam) => {
-				logger.debug('signIn mfa setup', challengeName);
 				user['challengeName'] = challengeName;
 				user['challengeParam'] = challengeParam;
 				resolve(user);
 			},
 			newPasswordRequired: (userAttributes, requiredAttributes) => {
-				logger.debug('signIn new password');
 				user['challengeName'] = 'NEW_PASSWORD_REQUIRED';
 				user['challengeParam'] = {
 					userAttributes,
@@ -596,13 +585,11 @@ export class AuthClass {
 				resolve(user);
 			},
 			totpRequired: (challengeName, challengeParam) => {
-				logger.debug('signIn totpRequired');
 				user['challengeName'] = challengeName;
 				user['challengeParam'] = challengeParam;
 				resolve(user);
 			},
 			selectMFAType: (challengeName, challengeParam) => {
-				logger.debug('signIn selectMFAType', challengeName);
 				user['challengeName'] = challengeName;
 				user['challengeParam'] = challengeParam;
 				resolve(user);
@@ -674,11 +661,10 @@ export class AuthClass {
 		return new Promise((res, rej) => {
 			user.getMFAOptions((err, mfaOptions) => {
 				if (err) {
-					logger.debug('get MFA Options failed', err);
 					rej(err);
 					return;
 				}
-				logger.debug('get MFA options success', mfaOptions);
+
 				res(mfaOptions);
 				return;
 			});
@@ -702,7 +688,6 @@ export class AuthClass {
 			user.getUserData(
 				async (err, data) => {
 					if (err) {
-						logger.debug('getting preferred mfa failed', err);
 						if (this.isSessionInvalid(err)) {
 							try {
 								await this.cleanUpInvalidSession(user);
@@ -757,7 +742,6 @@ export class AuthClass {
 			} else if (mfaList.length === 0) {
 				ret = 'NOMFA';
 			} else {
-				logger.debug('invalid case for getPreferredMFA', data);
 			}
 		}
 		return ret;
@@ -767,7 +751,6 @@ export class AuthClass {
 		return new Promise((res, rej) => {
 			user.getUserData(async (err, data) => {
 				if (err) {
-					logger.debug('getting user data failed', err);
 					if (this.isSessionInvalid(err)) {
 						try {
 							await this.cleanUpInvalidSession(user);
@@ -861,7 +844,6 @@ export class AuthClass {
 				}
 				break;
 			default:
-				logger.debug('no validmfa method provided');
 				return this.rejectAuthError(AuthErrorTypes.NoMFA);
 		}
 
@@ -872,16 +854,13 @@ export class AuthClass {
 				totpMfaSettings,
 				(err, result) => {
 					if (err) {
-						logger.debug('Set user mfa preference error', err);
 						return rej(err);
 					}
-					logger.debug('Set user mfa success', result);
-					logger.debug('Caching the latest user data into local');
+
 					// cache the latest result into user data
 					user.getUserData(
 						async (err, data) => {
 							if (err) {
-								logger.debug('getting user data failed', err);
 								if (this.isSessionInvalid(err)) {
 									try {
 										await this.cleanUpInvalidSession(user);
@@ -919,11 +898,10 @@ export class AuthClass {
 		return new Promise((res, rej) => {
 			user.disableMFA((err, data) => {
 				if (err) {
-					logger.debug('disable mfa failed', err);
 					rej(err);
 					return;
 				}
-				logger.debug('disable mfa succeed', data);
+
 				res(data);
 				return;
 			});
@@ -940,11 +918,10 @@ export class AuthClass {
 		return new Promise((res, rej) => {
 			user.enableMFA((err, data) => {
 				if (err) {
-					logger.debug('enable mfa failed', err);
 					rej(err);
 					return;
 				}
-				logger.debug('enable mfa succeed', data);
+
 				res(data);
 				return;
 			});
@@ -960,12 +937,10 @@ export class AuthClass {
 		return new Promise((res, rej) => {
 			user.associateSoftwareToken({
 				onFailure: err => {
-					logger.debug('associateSoftwareToken failed', err);
 					rej(err);
 					return;
 				},
 				associateSecretCode: secretCode => {
-					logger.debug('associateSoftwareToken sucess', secretCode);
 					res(secretCode);
 					return;
 				},
@@ -983,11 +958,9 @@ export class AuthClass {
 		user: CognitoUser | any,
 		challengeAnswer: string
 	): Promise<CognitoUserSession> {
-		logger.debug('verification totp token', user, challengeAnswer);
 		return new Promise((res, rej) => {
 			user.verifySoftwareToken(challengeAnswer, 'My TOTP device', {
 				onFailure: err => {
-					logger.debug('verifyTotpToken failed', err);
 					rej(err);
 					return;
 				},
@@ -997,7 +970,7 @@ export class AuthClass {
 						user,
 						`A user ${user.getUsername()} has been signed in`
 					);
-					logger.debug('verifyTotpToken success', data);
+
 					res(data);
 					return;
 				},
@@ -1026,13 +999,10 @@ export class AuthClass {
 				code,
 				{
 					onSuccess: async session => {
-						logger.debug(session);
 						try {
 							await this.Credentials.clear();
 							const cred = await this.Credentials.set(session, 'session');
-							logger.debug('succeed to get cognito credentials', cred);
 						} catch (e) {
-							logger.debug('cannot get cognito credentials', e);
 						} finally {
 							that.user = user;
 
@@ -1045,7 +1015,6 @@ export class AuthClass {
 						}
 					},
 					onFailure: err => {
-						logger.debug('confirm signIn failure', err);
 						reject(err);
 					},
 				},
@@ -1072,13 +1041,10 @@ export class AuthClass {
 				requiredAttributes,
 				{
 					onSuccess: async session => {
-						logger.debug(session);
 						try {
 							await this.Credentials.clear();
 							const cred = await this.Credentials.set(session, 'session');
-							logger.debug('succeed to get cognito credentials', cred);
 						} catch (e) {
-							logger.debug('cannot get cognito credentials', e);
 						} finally {
 							that.user = user;
 							dispatchAuthEvent(
@@ -1090,7 +1056,6 @@ export class AuthClass {
 						}
 					},
 					onFailure: err => {
-						logger.debug('completeNewPassword failure', err);
 						dispatchAuthEvent(
 							'completeNewPassword_failure',
 							err,
@@ -1099,19 +1064,16 @@ export class AuthClass {
 						reject(err);
 					},
 					mfaRequired: (challengeName, challengeParam) => {
-						logger.debug('signIn MFA required');
 						user['challengeName'] = challengeName;
 						user['challengeParam'] = challengeParam;
 						resolve(user);
 					},
 					mfaSetup: (challengeName, challengeParam) => {
-						logger.debug('signIn mfa setup', challengeName);
 						user['challengeName'] = challengeName;
 						user['challengeParam'] = challengeParam;
 						resolve(user);
 					},
 					totpRequired: (challengeName, challengeParam) => {
-						logger.debug('signIn mfa setup', challengeName);
 						user['challengeName'] = challengeName;
 						user['challengeParam'] = challengeParam;
 						resolve(user);
@@ -1181,7 +1143,6 @@ export class AuthClass {
 		try {
 			await this._storageSync;
 		} catch (e) {
-			logger.debug('Failed to sync cache info into memory', e);
 			throw new Error(e);
 		}
 
@@ -1194,12 +1155,10 @@ export class AuthClass {
 				const user = this.userPool.getCurrentUser();
 
 				if (!user) {
-					logger.debug('Failed to get user from user pool');
 					return rej(new Error('No current user.'));
 				} else {
 					user.getSession(async (err, session) => {
 						if (err) {
-							logger.debug('Failed to get the user session', err);
 							if (this.isSessionInvalid(err)) {
 								try {
 									await this.cleanUpInvalidSession(user);
@@ -1229,7 +1188,6 @@ export class AuthClass {
 										this.cleanCachedItems(); // clean aws credentials
 									} catch (e) {
 										// TODO: change to rejects in refactor
-										logger.debug('failed to clear cached items');
 									}
 
 									if (isSignedInHostedUI) {
@@ -1248,7 +1206,6 @@ export class AuthClass {
 					});
 				}
 			} else {
-				logger.debug('no Congito User pool');
 				rej(new Error('Cognito User pool does not exist'));
 			}
 		});
@@ -1410,9 +1367,7 @@ export class AuthClass {
 		this.user = null;
 		try {
 			await this.cleanCachedItems(); // clean aws credentials
-		} catch (e) {
-			logger.debug('failed to clear cached items');
-		}
+		} catch (e) {}
 		if (this.isSignedInHostedUI()) {
 			return new Promise((res, rej) => {
 				this.oAuthSignOutRedirect(res, rej);
@@ -1437,12 +1392,8 @@ export class AuthClass {
 			this._storageSync
 				.then(async () => {
 					if (this.isOAuthInProgress()) {
-						logger.debug('OAuth signIn in progress, waiting for resolution...');
-
 						await new Promise(res => {
 							const timeoutId = setTimeout(() => {
-								logger.debug('OAuth signIn in progress timeout');
-
 								Hub.remove('auth', hostedUISignCallback);
 
 								res();
@@ -1457,7 +1408,6 @@ export class AuthClass {
 									event === 'cognitoHostedUI' ||
 									event === 'cognitoHostedUI_failure'
 								) {
-									logger.debug(`OAuth signIn resolved: ${event}`);
 									clearTimeout(timeoutId);
 
 									Hub.remove('auth', hostedUISignCallback);
@@ -1471,7 +1421,6 @@ export class AuthClass {
 					const user = this.userPool.getCurrentUser();
 
 					if (!user) {
-						logger.debug('Failed to get user from user pool');
 						rej('No current user');
 						return;
 					}
@@ -1482,7 +1431,6 @@ export class AuthClass {
 					user.getSession(
 						async (err, session) => {
 							if (err) {
-								logger.debug('Failed to get the user session', err);
 								if (this.isSessionInvalid(err)) {
 									try {
 										await this.cleanUpInvalidSession(user);
@@ -1514,7 +1462,6 @@ export class AuthClass {
 								user.getUserData(
 									async (err, data) => {
 										if (err) {
-											logger.debug('getting user data failed', err);
 											if (this.isSessionInvalid(err)) {
 												try {
 													await this.cleanUpInvalidSession(user);
@@ -1562,7 +1509,6 @@ export class AuthClass {
 					);
 				})
 				.catch(e => {
-					logger.debug('Failed to sync cache info into memory', e);
 					return rej(e);
 				});
 		});
@@ -1580,12 +1526,10 @@ export class AuthClass {
 	public async currentAuthenticatedUser(
 		params?: CurrentUserOpts
 	): Promise<CognitoUser | any> {
-		logger.debug('getting current authenticated user');
 		let federatedUser = null;
 		try {
 			await this._storageSync;
 		} catch (e) {
-			logger.debug('Failed to sync cache info into memory', e);
 			throw e;
 		}
 
@@ -1599,16 +1543,13 @@ export class AuthClass {
 					token: federatedInfo.token,
 				};
 			}
-		} catch (e) {
-			logger.debug('cannot load federated user from auth storage');
-		}
+		} catch (e) {}
 
 		if (federatedUser) {
 			this.user = federatedUser;
-			logger.debug('get current authenticated federated user', this.user);
+
 			return this.user;
 		} else {
-			logger.debug('get current authenticated userpool user');
 			let user = null;
 			try {
 				user = await this.currentUserPoolUser(params);
@@ -1619,7 +1560,7 @@ export class AuthClass {
 							'Please make sure the Auth module is configured with a valid Cognito User Pool ID'
 					);
 				}
-				logger.debug('The user is not authenticated by the error', e);
+
 				return Promise.reject('The user is not authenticated');
 			}
 			this.user = user;
@@ -1633,7 +1574,7 @@ export class AuthClass {
 	 */
 	public currentSession(): Promise<CognitoUserSession> {
 		const that = this;
-		logger.debug('Getting current session');
+
 		// Purposely not calling the reject method here because we don't need a console error
 		if (!this.userPool) {
 			return this.rejectNoUserPool();
@@ -1650,13 +1591,11 @@ export class AuthClass {
 							return;
 						})
 						.catch(e => {
-							logger.debug('Failed to get the current session', e);
 							rej(e);
 							return;
 						});
 				})
 				.catch(e => {
-					logger.debug('Failed to get the current user', e);
 					rej(e);
 					return;
 				});
@@ -1670,17 +1609,14 @@ export class AuthClass {
 	 */
 	public userSession(user): Promise<CognitoUserSession> {
 		if (!user) {
-			logger.debug('the user is null');
 			return this.rejectAuthError(AuthErrorTypes.NoUserSession);
 		}
 		const clientMetadata = this._config.clientMetadata; // TODO: verify behavior if this is override during signIn
 
 		return new Promise((res, rej) => {
-			logger.debug('Getting the session from this user:', user);
 			user.getSession(
 				async (err, session) => {
 					if (err) {
-						logger.debug('Failed to get the session from user', user);
 						if (this.isSessionInvalid(err)) {
 							try {
 								await this.cleanUpInvalidSession(user);
@@ -1696,7 +1632,6 @@ export class AuthClass {
 						rej(err);
 						return;
 					} else {
-						logger.debug('Succeed to get the user session', session);
 						res(session);
 						return;
 					}
@@ -1711,12 +1646,9 @@ export class AuthClass {
 	 * @return - A promise resolves to be current user's credentials
 	 */
 	public async currentUserCredentials(): Promise<ICredentials> {
-		logger.debug('Getting current user credentials');
-
 		try {
 			await this._storageSync;
 		} catch (e) {
-			logger.debug('Failed to sync cache info into memory', e);
 			throw e;
 		}
 
@@ -1726,9 +1658,7 @@ export class AuthClass {
 			federatedInfo = JSON.parse(
 				this._storage.getItem('aws-amplify-federatedInfo')
 			);
-		} catch (e) {
-			logger.debug('failed to get or parse item aws-amplify-federatedInfo', e);
-		}
+		} catch (e) {}
 
 		if (federatedInfo) {
 			// refresh the jwt token here if necessary
@@ -1736,18 +1666,15 @@ export class AuthClass {
 		} else {
 			return this.currentSession()
 				.then(session => {
-					logger.debug('getting session success', session);
 					return this.Credentials.set(session, 'session');
 				})
 				.catch(() => {
-					logger.debug('getting guest credentials');
 					return this.Credentials.set(null, 'guest');
 				});
 		}
 	}
 
 	public currentCredentials(): Promise<ICredentials> {
-		logger.debug('getting current credentials');
 		return this.Credentials.get();
 	}
 
@@ -1838,7 +1765,6 @@ export class AuthClass {
 		try {
 			await this._storageSync;
 		} catch (e) {
-			logger.debug('Failed to sync cache info into memory', e);
 			throw e;
 		}
 
@@ -1848,7 +1774,6 @@ export class AuthClass {
 
 		return new Promise((res, rej) => {
 			if (opts && opts.global) {
-				logger.debug('user global sign out', user);
 				// in order to use global signout
 				// we must validate the user as an authenticated user by using getSession
 				const clientMetadata = this._config.clientMetadata; // TODO: verify behavior if this is override during signIn
@@ -1856,7 +1781,6 @@ export class AuthClass {
 				user.getSession(
 					async (err, result) => {
 						if (err) {
-							logger.debug('failed to get the user session', err);
 							if (this.isSessionInvalid(err)) {
 								try {
 									await this.cleanUpInvalidSession(user);
@@ -1873,7 +1797,6 @@ export class AuthClass {
 						}
 						user.globalSignOut({
 							onSuccess: data => {
-								logger.debug('global sign out success');
 								if (isSignedInHostedUI) {
 									this.oAuthSignOutRedirect(res, rej);
 								} else {
@@ -1881,7 +1804,6 @@ export class AuthClass {
 								}
 							},
 							onFailure: err => {
-								logger.debug('global sign out failed', err);
 								return rej(err);
 							},
 						});
@@ -1889,7 +1811,6 @@ export class AuthClass {
 					{ clientMetadata }
 				);
 			} else {
-				logger.debug('user sign out', user);
 				user.signOut(() => {
 					if (isSignedInHostedUI) {
 						this.oAuthSignOutRedirect(res, rej);
@@ -1934,19 +1855,15 @@ export class AuthClass {
 	public async signOut(opts?: SignOutOpts): Promise<any> {
 		try {
 			await this.cleanCachedItems();
-		} catch (e) {
-			logger.debug('failed to clear cached items');
-		}
+		} catch (e) {}
 
 		if (this.userPool) {
 			const user = this.userPool.getCurrentUser();
 			if (user) {
 				await this.cognitoIdentitySignOut(opts, user);
 			} else {
-				logger.debug('no current Cognito user');
 			}
 		} else {
-			logger.debug('no Cognito User pool');
 		}
 
 		/**
@@ -1984,7 +1901,6 @@ export class AuthClass {
 					newPassword,
 					(err, data) => {
 						if (err) {
-							logger.debug('change password failure', err);
 							return reject(err);
 						} else {
 							return resolve(data);
@@ -2021,7 +1937,6 @@ export class AuthClass {
 						return;
 					},
 					onFailure: err => {
-						logger.debug('forgot password failure', err);
 						dispatchAuthEvent(
 							'forgotPassword_failure',
 							err,
@@ -2243,7 +2158,7 @@ export class AuthClass {
 				currentUser,
 				`A user ${currentUser.username} has been signed in`
 			);
-			logger.debug('federated sign in credentials', credentials);
+
 			return credentials;
 		}
 	}
@@ -2254,7 +2169,6 @@ export class AuthClass {
 	 */
 	private async _handleAuthResponse(URL?: string) {
 		if (this.oAuthFlowInProgress) {
-			logger.debug(`Skipping URL ${URL} current flow in progress`);
 			return;
 		}
 
@@ -2305,7 +2219,6 @@ export class AuthClass {
 					// Get AWS Credentials & store if Identity Pool is defined
 					if (this._config.identityPoolId) {
 						credentials = await this.Credentials.set(session, 'session');
-						logger.debug('AWS credentials', credentials);
 					}
 
 					/*
@@ -2359,8 +2272,6 @@ export class AuthClass {
 
 					return credentials;
 				} catch (err) {
-					logger.debug('Error in cognito hosted auth response', err);
-
 					// Just like a successful handling of `?code`, replace the window history to "dispose" of the `code`.
 					// Otherwise, reloading the page will throw errors as the `code` has already been spent.
 					if (window && typeof window.history !== 'undefined') {
@@ -2483,7 +2394,6 @@ export class AuthClass {
 		try {
 			currUser = await this.currentUserPoolUser();
 		} catch (error) {
-			logger.debug('The user is not authenticated by the error', error);
 			return Promise.reject('The user is not authenticated');
 		}
 
@@ -2512,7 +2422,6 @@ export class AuthClass {
 		try {
 			currUser = await this.currentUserPoolUser();
 		} catch (error) {
-			logger.debug('The user is not authenticated by the error', error);
 			return Promise.reject('The user is not authenticated');
 		}
 
@@ -2541,7 +2450,6 @@ export class AuthClass {
 		try {
 			currUser = await this.currentUserPoolUser();
 		} catch (error) {
-			logger.debug('The user is not authenticated by the error', error);
 			throw new Error('The user is not authenticated');
 		}
 

@@ -14,17 +14,14 @@
 import * as React from 'react';
 import { isEmpty, ConsoleLogger as Logger } from '@aws-amplify/core';
 import { Auth } from '@aws-amplify/auth';
-import { AuthPiece, IAuthPieceProps, IAuthPieceState  } from './AuthPiece';
+import { AuthPiece, IAuthPieceProps, IAuthPieceState } from './AuthPiece';
 import { TOTPSetupComp } from '../Widget/TOTPSetupComp';
 
 import { auth } from '../Amplify-UI/data-test-attributes';
 
 const logger = new Logger('TOTPSetup');
 
-export class TOTPSetup extends AuthPiece<
-	IAuthPieceProps,
-	IAuthPieceState
-> {
+export class TOTPSetup extends AuthPiece<IAuthPieceProps, IAuthPieceState> {
 	constructor(props: IAuthPieceProps) {
 		super(props);
 
@@ -50,7 +47,6 @@ export class TOTPSetup extends AuthPiece<
 	}
 
 	onTOTPEvent(event, data, user) {
-		logger.debug('on totp event', event, data);
 		// const user = this.props.authData;
 		if (event === 'Setup TOTP') {
 			if (data === 'SUCCESS') {

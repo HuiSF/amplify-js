@@ -70,9 +70,7 @@ export class AmplifyFacebookButton {
 					AUTH_SOURCE_KEY,
 					JSON.stringify({ provider: 'facebook' })
 				);
-			} catch (e) {
-				logger.debug('Failed to cache auth source into localStorage', e);
-			}
+			} catch (e) {}
 
 			if (response.status === 'connected') {
 				return this.federatedSignIn(response.authResponse);

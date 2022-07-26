@@ -41,7 +41,7 @@ export interface IVerifyContactState extends IAuthPieceState {
 export class VerifyContact extends AuthPiece<
 	IAuthPieceProps,
 	IVerifyContactState
-	> {
+> {
 	constructor(props: IAuthPieceProps) {
 		super(props);
 
@@ -67,7 +67,6 @@ export class VerifyContact extends AuthPiece<
 
 		Auth.verifyCurrentUserAttribute(checkedValue)
 			.then(data => {
-				logger.debug(data);
 				this.setState({ verifyAttr: checkedValue });
 			})
 			.catch(err => this.error(err));
@@ -83,7 +82,6 @@ export class VerifyContact extends AuthPiece<
 		}
 		Auth.verifyCurrentUserAttributeSubmit(attr, code)
 			.then(data => {
-				logger.debug(data);
 				this.changeState('signedIn', this.props.authData);
 				this.setState({ verifyAttr: null });
 			})
@@ -93,12 +91,10 @@ export class VerifyContact extends AuthPiece<
 	verifyView() {
 		const user = this.props.authData;
 		if (!user) {
-			logger.debug('no user for verify');
 			return null;
 		}
 		const { unverified } = user;
 		if (!unverified) {
-			logger.debug('no unverified on user');
 			return null;
 		}
 		const { email, phone_number } = unverified;
@@ -173,14 +169,14 @@ export class VerifyContact extends AuthPiece<
 								{I18n.get('Submit')}
 							</Button>
 						) : (
-								<Button
-									theme={theme}
-									onClick={this.verify}
-									data-test={auth.verifyContact.verifyButton}
-								>
-									{I18n.get('Verify')}
-								</Button>
-							)}
+							<Button
+								theme={theme}
+								onClick={this.verify}
+								data-test={auth.verifyContact.verifyButton}
+							>
+								{I18n.get('Verify')}
+							</Button>
+						)}
 					</SectionFooterPrimaryContent>
 					<SectionFooterSecondaryContent theme={theme}>
 						<Link

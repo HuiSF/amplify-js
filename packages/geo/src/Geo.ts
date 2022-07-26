@@ -51,7 +51,6 @@ export class GeoClass {
 	constructor() {
 		this._config = {};
 		this._pluggables = [];
-		logger.debug('Geo Options', this._config);
 	}
 
 	/**
@@ -86,7 +85,6 @@ export class GeoClass {
 			pluggable => pluggable.getProviderName() === providerName
 		);
 		if (pluggable === undefined) {
-			logger.debug('No plugin found with providerName', providerName);
 			throw new Error('No plugin found in Geo for the provider');
 		} else return pluggable;
 	}
@@ -108,8 +106,6 @@ export class GeoClass {
 	 * @return {Object} - Current configuration
 	 */
 	configure(config?) {
-		logger.debug('configure Geo');
-
 		if (!config) return this._config;
 
 		const amplifyConfig = parseMobileHubConfig(config);
@@ -163,7 +159,6 @@ export class GeoClass {
 		try {
 			return await prov.searchByText(text, options);
 		} catch (error) {
-			logger.debug(error);
 			throw error;
 		}
 	}
@@ -186,7 +181,6 @@ export class GeoClass {
 			validateCoordinates(lng, lat);
 			return await prov.searchByCoordinates(coordinates, options);
 		} catch (error) {
-			logger.debug(error);
 			throw error;
 		}
 	}
@@ -217,7 +211,6 @@ export class GeoClass {
 		try {
 			return await prov.saveGeofences(geofenceInputArray, options);
 		} catch (error) {
-			logger.debug(error);
 			throw error;
 		}
 	}
@@ -238,7 +231,6 @@ export class GeoClass {
 		try {
 			return await prov.getGeofence(geofenceId, options);
 		} catch (error) {
-			logger.debug(error);
 			throw error;
 		}
 	}
@@ -259,7 +251,6 @@ export class GeoClass {
 		try {
 			return await prov.listGeofences(options);
 		} catch (error) {
-			logger.debug(error);
 			throw error;
 		}
 	}
@@ -291,7 +282,6 @@ export class GeoClass {
 		try {
 			return await prov.deleteGeofences(geofenceIdsInputArray, options);
 		} catch (error) {
-			logger.debug(error);
 			throw error;
 		}
 	}

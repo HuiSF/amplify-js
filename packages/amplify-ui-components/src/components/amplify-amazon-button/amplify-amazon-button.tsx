@@ -46,7 +46,6 @@ export class AmplifyAmazonButton {
 
 		window['amazon'].Login.retrieveProfile(async userInfo => {
 			if (!userInfo.success) {
-				return logger.debug('Get user Info failed');
 			}
 
 			const user = {
@@ -76,7 +75,6 @@ export class AmplifyAmazonButton {
 
 		window['amazon'].Login.authorize({ scope: 'profile' }, response => {
 			if (response.error) {
-				return logger.debug('Failed to login with amazon: ' + response.error);
 			}
 
 			try {
@@ -84,9 +82,7 @@ export class AmplifyAmazonButton {
 					AUTH_SOURCE_KEY,
 					JSON.stringify({ provider: 'amazon' })
 				);
-			} catch (e) {
-				logger.debug('Failed to cache auth source into localStorage', e);
-			}
+			} catch (e) {}
 
 			this.federatedSignIn(response);
 		});

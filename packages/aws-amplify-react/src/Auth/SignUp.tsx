@@ -251,7 +251,6 @@ export class SignUp extends AuthPiece<ISignUpProps, IAuthPieceState> {
 		let labelCheck = false;
 		this.signUpFields.forEach(field => {
 			if (field.label === this.getUsernameLabel()) {
-				logger.debug(`Changing the username to the value of ${field.label}`);
 				signup_info.username =
 					signup_info.attributes[field.key] || signup_info.username;
 				labelCheck = true;

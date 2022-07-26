@@ -54,9 +54,7 @@ export function withGoogle(Comp) {
 							Constants.AUTH_SOURCE_KEY,
 							JSON.stringify(payload)
 						);
-					} catch (e) {
-						logger.debug('Failed to cache auth source into localStorage', e);
-					}
+					} catch (e) {}
 				},
 				error => {
 					if (onError) onError(error);
@@ -109,11 +107,9 @@ export function withGoogle(Comp) {
 
 			authInstance.then(googleAuth => {
 				if (!googleAuth) {
-					logger.debug('google Auth undefined');
 					return Promise.resolve();
 				}
 
-				logger.debug('google signing out');
 				return googleAuth.signOut();
 			});
 		}
@@ -136,12 +132,10 @@ export function withGoogle(Comp) {
 		}
 
 		initGapi() {
-			logger.debug('init gapi');
-
 			const that = this;
 			const { google_client_id } = this.props;
 			const g = window.gapi;
-			g.load('auth2', function() {
+			g.load('auth2', function () {
 				g.auth2.init({
 					client_id: google_client_id,
 					scope: 'profile email openid',

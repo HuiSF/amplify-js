@@ -84,7 +84,6 @@ export class AWSAppSyncProvider extends MqttOverWSProvider {
 	subscribe(topics: string[] | string, options: any = {}): Observable<any> {
 		const result = new Observable<any>(observer => {
 			const targetTopics = ([] as string[]).concat(topics);
-			logger.debug('Subscribing to topic(s)', targetTopics.join(','));
 
 			(async () => {
 				// Add these topics to map
@@ -166,8 +165,6 @@ export class AWSAppSyncProvider extends MqttOverWSProvider {
 			})();
 
 			return () => {
-				logger.debug('Unsubscribing from topic(s)', targetTopics.join(','));
-
 				targetTopics.forEach(t => {
 					const client = this._topicClient.get(t);
 

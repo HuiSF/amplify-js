@@ -9,7 +9,6 @@ const logger = new Logger('SQLiteDatabase');
 SQLite.enablePromise(true);
 
 if (Logger.LOG_LEVEL === 'DEBUG') {
-	SQLite.DEBUG(true);
 }
 
 /*
@@ -44,9 +43,8 @@ class SQLiteDatabase implements CommonSQLiteDatabase {
 
 	public async clear(): Promise<void> {
 		await this.closeDB();
-		logger.debug('Deleting database');
+
 		await SQLite.deleteDatabase({ name: DB_NAME, location: 'default' });
-		logger.debug('Database deleted');
 	}
 
 	public async get<T extends PersistentModel>(
@@ -152,9 +150,8 @@ class SQLiteDatabase implements CommonSQLiteDatabase {
 
 	private async closeDB() {
 		if (this.db) {
-			logger.debug('Closing Database');
 			await this.db.close();
-			logger.debug('Database closed');
+
 			this.db = undefined;
 		}
 	}

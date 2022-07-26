@@ -50,7 +50,6 @@ export class SessionTracker {
 		}
 
 		if (!document || !document.addEventListener) {
-			logger.debug('not in the supported web environment');
 			return false;
 		}
 
@@ -64,7 +63,6 @@ export class SessionTracker {
 			this._hidden = 'webkitHidden';
 			this._visibilityChange = 'webkitvisibilitychange';
 		} else {
-			logger.debug('not in the supported web environment');
 			return false;
 		}
 		return true;
@@ -85,9 +83,7 @@ export class SessionTracker {
 					attributes,
 				},
 				this._config.provider
-			).catch(e => {
-				logger.debug('record session stop event failed.', e);
-			});
+			).catch(e => {});
 		} else {
 			this._tracker(
 				{
@@ -95,9 +91,7 @@ export class SessionTracker {
 					attributes,
 				},
 				this._config.provider
-			).catch(e => {
-				logger.debug('record session start event failed.', e);
-			});
+			).catch(e => {});
 		}
 	}
 
@@ -119,16 +113,13 @@ export class SessionTracker {
 					immediate: true,
 				},
 				this._config.provider
-			).catch(e => {
-				logger.debug('record session stop event failed.', e);
-			});
+			).catch(e => {});
 		});
 	}
 
 	// to keep configure a synchronized function
 	private async _sendInitialEvent() {
 		if (initialEventSent) {
-			logger.debug('the start session has been sent when the page is loaded');
 			return;
 		} else {
 			initialEventSent = true;
@@ -147,9 +138,7 @@ export class SessionTracker {
 				attributes,
 			},
 			this._config.provider
-		).catch(e => {
-			logger.debug('record session start event failed.', e);
-		});
+		).catch(e => {});
 	}
 
 	configure(opts?: SessionTrackOpts) {

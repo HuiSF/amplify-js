@@ -548,9 +548,7 @@ export async function getModelAuthModes({
 				}
 			})
 		);
-	} catch (error) {
-		logger.debug(`Error getting auth modes for model: ${modelName}`, error);
-	}
+	} catch (error) {}
 	return modelAuthModes;
 }
 

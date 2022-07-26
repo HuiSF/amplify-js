@@ -25,8 +25,6 @@ export abstract class AbstractXRProvider implements XRProvider {
 	configure(config: ProviderOptions = {}): ProviderOptions {
 		this._config = { ...config, ...this._config };
 
-		logger.debug(`configure ${this.getProviderName()}`, this._config);
-
 		return this.options;
 	}
 

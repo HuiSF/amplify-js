@@ -32,7 +32,6 @@ export class I18n {
 	 * @param {Object} config - Configuration of the I18n
 	 */
 	static configure(config) {
-		logger.debug('configure I18n');
 		if (!config) {
 			return _config;
 		}
@@ -54,7 +53,6 @@ export class I18n {
 	 * Create an instance of I18n for the library
 	 */
 	static createInstance() {
-		logger.debug('create I18n instance');
 		if (_i18n) {
 			return;
 		}

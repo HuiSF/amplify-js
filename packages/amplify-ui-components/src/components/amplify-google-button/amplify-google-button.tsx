@@ -74,9 +74,7 @@ export class AmplifyGoogleButton {
 				AUTH_SOURCE_KEY,
 				JSON.stringify({ provider: 'google' })
 			);
-		} catch (e) {
-			logger.debug('Failed to cache auth source into localStorage', e);
-		}
+		} catch (e) {}
 
 		const { id_token, expires_at } = user.getAuthResponse();
 		const profile = user.getBasicProfile();

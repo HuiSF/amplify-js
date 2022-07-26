@@ -65,7 +65,6 @@ export class ForgotPassword extends AuthPiece<
 		}
 		Auth.forgotPassword(username)
 			.then(data => {
-				logger.debug(data);
 				this.setState({ delivery: data.CodeDeliveryDetails });
 			})
 			.catch(err => this.error(err));
@@ -83,7 +82,6 @@ export class ForgotPassword extends AuthPiece<
 		}
 		Auth.forgotPasswordSubmit(username, code, password)
 			.then(data => {
-				logger.debug(data);
 				this.changeState('signIn');
 				this.setState({ delivery: null });
 			})

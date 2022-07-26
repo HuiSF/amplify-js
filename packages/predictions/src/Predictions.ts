@@ -85,7 +85,6 @@ export class PredictionsClass {
 			pluggable => pluggable.getProviderName() === providerName
 		);
 		if (pluggable === undefined) {
-			logger.debug('No plugin found with providerName=>', providerName);
 			return null;
 		} else return pluggable;
 	}
@@ -116,7 +115,7 @@ export class PredictionsClass {
 		let predictionsConfig = options ? options.predictions || options : {};
 		predictionsConfig = { ...predictionsConfig, ...options };
 		this._options = Object.assign({}, this._options, predictionsConfig);
-		logger.debug('configure Predictions', this._options);
+
 		this.getAllProviders().forEach(pluggable =>
 			this.configurePluggable(pluggable)
 		);

@@ -156,7 +156,7 @@ export default class Authenticator extends React.Component<IAuthenticatorProps, 
 	async checkContact(user: any) {
 		try {
 			const data = await Auth.verifiedContact(user);
-			logger.debug('verified user attributes', data);
+
 			if (!JS.isEmpty(data.verified)) {
 				this.handleStateChange('signedIn', user);
 			} else {
@@ -185,7 +185,7 @@ export default class Authenticator extends React.Component<IAuthenticatorProps, 
 			})
 			.catch((err) => {
 				if (!this._isMounted) return;
-				logger.debug(err);
+
 				if (statesJumpToSignIn.includes(authState)) {
 					Auth.signOut()
 						.then(() => {

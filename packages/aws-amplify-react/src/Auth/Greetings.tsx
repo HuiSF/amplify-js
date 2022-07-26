@@ -64,15 +64,13 @@ export class Greetings extends AuthPiece<IGreetingsProps, IGreetingsState> {
 
 	findState() {
 		if (!this.props.authState && !this.props.authData) {
-			Auth.currentAuthenticatedUser()
-				.then(user => {
-					this.setState({
-						authState: 'signedIn',
-						authData: user,
-						stateFromStorage: true,
-					});
-				})
-				.catch(err => logger.debug(err));
+			Auth.currentAuthenticatedUser().then(user => {
+				this.setState({
+					authState: 'signedIn',
+					authData: user,
+					stateFromStorage: true,
+				});
+			});
 		}
 	}
 
@@ -149,12 +147,8 @@ export class Greetings extends AuthPiece<IGreetingsProps, IGreetingsState> {
 
 	renderSignOutButton() {
 		const { federated = {} } = this.props;
-		const {
-			google_client_id,
-			facebook_app_id,
-			amazon_client_id,
-			auth0,
-		} = federated;
+		const { google_client_id, facebook_app_id, amazon_client_id, auth0 } =
+			federated;
 		// @ts-ignore
 		const config = Auth.configure();
 		const { oauth = {} } = config;

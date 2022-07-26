@@ -90,7 +90,6 @@ export class AmplifyTOTPSetup {
 	}
 
 	private async onTOTPEvent(user: CognitoUserInterface) {
-		logger.debug('on totp event');
 		await checkContact(user, this.handleAuthStateChange);
 	}
 
@@ -132,13 +131,12 @@ export class AmplifyTOTPSetup {
 		this.loading = true;
 		try {
 			const secretKey = await Auth.setupTOTP(this.user);
-			logger.debug('secret key', secretKey);
+
 			this.code = this.buildOtpAuthPath(this.user, encodedIssuer, secretKey);
 
 			this.generateQRCode(this.code);
 		} catch (error) {
 			dispatchToastHubEvent(error);
-			logger.debug(I18n.get(Translations.TOTP_SETUP_FAILURE), error);
 		} finally {
 			this.loading = false;
 		}
@@ -150,7 +148,6 @@ export class AmplifyTOTPSetup {
 		}
 
 		if (!this.qrCodeInput) {
-			logger.debug('No TOTP Code provided');
 			return;
 		}
 
@@ -169,7 +166,7 @@ export class AmplifyTOTPSetup {
 			await Auth.setPreferredMFA(user, MfaOption.TOTP);
 
 			this.setupMessage = I18n.get(Translations.TOTP_SUCCESS_MESSAGE);
-			logger.debug(I18n.get(Translations.TOTP_SUCCESS_MESSAGE));
+
 			await this.handleComplete(user);
 		} catch (error) {
 			this.setupMessage = I18n.get(Translations.TOTP_SETUP_FAILURE);

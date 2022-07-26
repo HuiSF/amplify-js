@@ -32,7 +32,6 @@ export default async callback => {
 	handler =
 		handler ||
 		(({ url, ...rest }: { url: string }) => {
-			logger.debug('urlListener', { url, ...rest });
 			callback({ url });
 		});
 

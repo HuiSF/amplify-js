@@ -46,7 +46,7 @@ export class AWSLexProvider extends AbstractInteractionsProvider {
 
 	reportBotStatus(data, botname) {
 		// Check if state is fulfilled to resolve onFullfilment promise
-		logger.debug('postContent state', data.dialogState);
+
 		if (
 			data.dialogState === 'ReadyForFulfillment' ||
 			data.dialogState === 'Fulfilled'
@@ -117,8 +117,6 @@ export class AWSLexProvider extends AbstractInteractionsProvider {
 				userId: credentials.identityId,
 			};
 
-			logger.debug('postText to lex', message);
-
 			try {
 				const postTextCommand = new PostTextCommand(params);
 				const data = await this.lexRuntimeServiceClient.send(postTextCommand);
@@ -151,7 +149,7 @@ export class AWSLexProvider extends AbstractInteractionsProvider {
 					accept: 'audio/mpeg',
 				};
 			}
-			logger.debug('postContent to lex', message);
+
 			try {
 				const postContentCommand = new PostContentCommand(params);
 				const data = await this.lexRuntimeServiceClient.send(

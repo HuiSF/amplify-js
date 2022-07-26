@@ -22,13 +22,10 @@ export abstract class AbstractConvertPredictionsProvider extends AbstractPredict
 		input: TranslateTextInput | TextToSpeechInput | SpeechToTextInput
 	): Promise<TextToSpeechOutput | TranslateTextOutput | SpeechToTextOutput> {
 		if (isTranslateTextInput(input)) {
-			logger.debug('translateText');
 			return this.translateText(input);
 		} else if (isTextToSpeechInput(input)) {
-			logger.debug('textToSpeech');
 			return this.convertTextToSpeech(input);
 		} else if (isSpeechToTextInput(input)) {
-			logger.debug('textToSpeech');
 			return this.convertSpeechToText(input);
 		}
 	}

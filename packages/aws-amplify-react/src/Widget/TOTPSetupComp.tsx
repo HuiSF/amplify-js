@@ -94,26 +94,22 @@ export class TOTPSetupComp extends React.Component<
 			);
 		}
 
-		Auth.setupTOTP(user)
-			.then(data => {
-				logger.debug('secret key', data);
-				const code =
-					'otpauth://totp/' +
-					issuer +
-					':' +
-					user.username +
-					'?secret=' +
-					data +
-					'&issuer=' +
-					issuer;
-				this.setState({ code });
-			})
-			.catch(err => logger.debug('totp setup failed', err));
+		Auth.setupTOTP(user).then(data => {
+			const code =
+				'otpauth://totp/' +
+				issuer +
+				':' +
+				user.username +
+				'?secret=' +
+				data +
+				'&issuer=' +
+				issuer;
+			this.setState({ code });
+		});
 	}
 
 	verifyTotpToken() {
 		if (!this.inputs) {
-			logger.debug('no input');
 			return;
 		}
 		const user = this.props.authData;
@@ -133,7 +129,7 @@ export class TOTPSetupComp extends React.Component<
 				return Auth.setPreferredMFA(user, 'TOTP')
 					.then(() => {
 						this.setState({ setupMessage: 'Setup TOTP successfully!' });
-						logger.debug('set up totp success!');
+
 						this.triggerTOTPEvent('Setup TOTP', 'SUCCESS', user);
 					})
 					.catch(err => {

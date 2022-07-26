@@ -36,12 +36,10 @@ class ExpoSQLiteDatabase implements CommonSQLiteDatabase {
 
 	public async clear(): Promise<void> {
 		try {
-			logger.debug('Clearing database');
 			await this.closeDB();
 			// delete database is not supported by expo-sqlite.
 			// Database file needs to be deleted using deleteAsync from expo-file-system
 			await deleteAsync(`${documentDirectory}SQLite/${DB_NAME}`);
-			logger.debug('Database cleared');
 		} catch (error) {
 			logger.warn('Error clearing the database.', error);
 			// open database if it was closed earlier and this.db was set to undefined.
@@ -269,11 +267,10 @@ class ExpoSQLiteDatabase implements CommonSQLiteDatabase {
 
 	private async closeDB() {
 		if (this.db) {
-			logger.debug('Closing Database');
 			// closing database is not supported by expo-sqlite.
 			// Workaround is to access the private db variable and call the close() method.
 			await (this.db as any)._db.close();
-			logger.debug('Database closed');
+
 			this.db = undefined;
 		}
 	}

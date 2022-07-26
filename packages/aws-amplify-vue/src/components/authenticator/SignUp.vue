@@ -190,7 +190,7 @@ export default {
       let labelCheck = false;
       this.options.signUpFields.forEach(field => {
           if (field.label === this.getUsernameLabel()) {
-              this.logger.debug(`Changing the username to the value of ${field.label}`);
+
               user.username = user.attributes[field.key] || user.username;
               labelCheck = true;
           }

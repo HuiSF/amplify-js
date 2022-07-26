@@ -32,7 +32,6 @@ export default class EventsBuffer {
 	private _flush = false;
 
 	constructor(client, config: EventsBufferConfig) {
-		logger.debug('Instantiating buffer with config:', config);
 		this._buffer = [];
 		this._client = client;
 		this._config = config;
@@ -45,7 +44,6 @@ export default class EventsBuffer {
 	public push(event: EventObject) {
 		// if the buffer is currently at the configured limit, pushing would exceed it
 		if (this._buffer.length >= this._config.bufferSize) {
-			logger.debug('Exceeded analytics events buffer size');
 			return event.handlers.reject(
 				new Error('Exceeded the size of analytics events buffer')
 			);
@@ -156,7 +154,6 @@ export default class EventsBuffer {
 	}
 
 	private _handlePutEventsFailure(err, eventMap: EventMap) {
-		logger.debug('_putEvents Failed: ', err);
 		const statusCode = err.$metadata && err.$metadata.httpStatusCode;
 
 		if (RETRYABLE_CODES.includes(statusCode)) {

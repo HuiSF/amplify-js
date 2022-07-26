@@ -22,7 +22,7 @@ export interface IAuthStateWrapperState {
 export class AuthStateWrapper extends React.Component<
 	IAuthStateWrapperProps,
 	IAuthStateWrapperState
-> {	
+> {
 	constructor(props) {
 		super(props);
 
@@ -45,7 +45,6 @@ export class AuthStateWrapper extends React.Component<
 	}
 
 	handleStateChange(state, data) {
-		logger.debug('authStateWrapper state change ' + state, data);
 		if (state === this.state.authState) {
 			return;
 		}

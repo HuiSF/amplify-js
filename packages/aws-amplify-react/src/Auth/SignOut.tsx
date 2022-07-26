@@ -117,31 +117,27 @@ export class SignOut extends AuthPiece<ISignOutProps, ISignOutState> {
 				`Failed to parse the info from ${Constants.AUTH_SOURCE_KEY} from localStorage with ${e}`
 			);
 		}
-		logger.debug('sign out from the source', payload);
-		const {
-			googleSignOut,
-			facebookSignOut,
-			amazonSignOut,
-			auth0SignOut,
-		} = this.props;
+
+		const { googleSignOut, facebookSignOut, amazonSignOut, auth0SignOut } =
+			this.props;
 		// @ts-ignore
 		switch (payload.provider) {
 			case Constants.GOOGLE:
 				if (googleSignOut) googleSignOut();
-				else logger.debug('No Google signout method provided');
+
 				break;
 			case Constants.FACEBOOK:
 				if (facebookSignOut) facebookSignOut();
-				else logger.debug('No Facebook signout method provided');
+
 				break;
 			case Constants.AMAZON:
 				if (amazonSignOut) amazonSignOut();
-				else logger.debug('No Amazon signout method provided');
+
 				break;
 			case Constants.AUTH0:
 				// @ts-ignore
 				if (auth0SignOut) auth0SignOut(payload.opts);
-				else logger.debug('No Auth0 signout method provided');
+
 				break;
 			default:
 				break;
@@ -159,7 +155,6 @@ export class SignOut extends AuthPiece<ISignOutProps, ISignOutState> {
 				}
 			})
 			.catch(err => {
-				logger.debug(err);
 				this.error(err);
 			});
 	}

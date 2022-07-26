@@ -50,7 +50,7 @@ export class AmplifyS3Album {
 
 	private list = async () => {
 		const { path = '', level, track, identityId } = this;
-		logger.debug('Album path: ' + path);
+
 		if (!Storage || typeof Storage.list !== 'function') {
 			throw new Error(NO_STORAGE_MODULE_FOUND);
 		}
@@ -87,7 +87,7 @@ export class AmplifyS3Album {
 		let items = this.filter ? this.filter(filtered) : filtered;
 		items = this.sort ? this.sort(items) : items;
 		this.albumItems = items;
-		logger.debug('album items', this.albumItems);
+
 		this.constructImgArray(this.albumItems);
 	};
 

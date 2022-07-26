@@ -53,38 +53,31 @@ export const handleSignIn = async (
 	}
 	try {
 		const user = await Auth.signIn(username, password);
-		logger.debug(user);
+
 		if (
 			user.challengeName === ChallengeName.SMSMFA ||
 			user.challengeName === ChallengeName.SoftwareTokenMFA
 		) {
-			logger.debug('confirm user with ' + user.challengeName);
 			handleAuthStateChange(AuthState.ConfirmSignIn, user);
 		} else if (user.challengeName === ChallengeName.NewPasswordRequired) {
-			logger.debug('require new password', user.challengeParam);
 			handleAuthStateChange(AuthState.ResetPassword, user);
 		} else if (user.challengeName === ChallengeName.MFASetup) {
-			logger.debug('TOTP setup', user.challengeParam);
 			handleAuthStateChange(AuthState.TOTPSetup, user);
 		} else if (
 			user.challengeName === ChallengeName.CustomChallenge &&
 			user.challengeParam &&
 			user.challengeParam.trigger === 'true'
 		) {
-			logger.debug('custom challenge', user.challengeParam);
 			handleAuthStateChange(AuthState.CustomConfirmSignIn, user);
 		} else {
 			await checkContact(user, handleAuthStateChange);
 		}
 	} catch (error) {
 		if (error.code === 'UserNotConfirmedException') {
-			logger.debug('the user is not confirmed');
 			handleAuthStateChange(AuthState.ConfirmSignUp, { username });
 		} else if (error.code === 'PasswordResetRequiredException') {
-			logger.debug('the user requires a new password');
 			handleAuthStateChange(AuthState.ForgotPassword, { username });
 		} else if (error.code === 'InvalidParameterException' && password === '') {
-			logger.debug('Password cannot be empty');
 			error.message = Translations.EMPTY_PASSWORD;
 		} else if (error.message === Translations.EMPTY_USERNAME) {
 			if (usernameAlias === UsernameAlias.email) {

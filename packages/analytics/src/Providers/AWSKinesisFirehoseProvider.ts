@@ -77,21 +77,17 @@ export class AWSKinesisFirehoseProvider extends AWSKinesisProvider {
 						DeliveryStreamName: streamName,
 					})
 				)
-				.then(res => logger.debug('Upload records to stream', streamName))
-				.catch(err => logger.debug('Failed to upload records to Kinesis', err));
+				.then(res => logger.debug('Upload records to stream', streamName));
 		});
 	}
 
 	protected _init(config, credentials) {
-		logger.debug('init clients');
-
 		if (
 			this._kinesisFirehose &&
 			this._config.credentials &&
 			this._config.credentials.sessionToken === credentials.sessionToken &&
 			this._config.credentials.identityId === credentials.identityId
 		) {
-			logger.debug('no change for analytics config, directly return from init');
 			return true;
 		}
 
@@ -102,7 +98,6 @@ export class AWSKinesisFirehoseProvider extends AWSKinesisProvider {
 	}
 
 	private _initFirehose(region, credentials) {
-		logger.debug('initialize kinesis firehose with credentials', credentials);
 		this._kinesisFirehose = new FirehoseClient({
 			apiVersion: '2015-08-04',
 			region,

@@ -303,7 +303,6 @@ class SubscriptionProcessor {
 						);
 					}
 				} catch (err) {
-					logger.debug('error getting OIDC JWT', err);
 					// best effort to get oidc jwt
 				}
 
@@ -393,7 +392,6 @@ class SubscriptionProcessor {
 									Observable<{
 										value: GraphQLResult<Record<string, PersistentModel>>;
 									}>
-
 								>(<unknown>this.amplifyContext.API.graphql({ query, variables, ...{ authMode }, authToken, userAgentSuffix }));
 
 								let subscriptionReadyCallback: () => void;

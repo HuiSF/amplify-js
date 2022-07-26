@@ -160,8 +160,6 @@ class IndexedDBAdapter implements Adapter {
 
 									// delete original
 									db.deleteObjectStore(tmpName);
-
-									logger.debug(`${count} ${storeName} records migrated`);
 								}
 
 								// add new models created after IndexedDB, but before migration

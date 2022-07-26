@@ -170,7 +170,6 @@ export class AWSAppSyncRealTimeProvider extends AbstractPubSubProvider {
 							throw new Error('Subscription never connected');
 						}
 					} catch (err) {
-						logger.debug(`Error while unsubscribing ${err}`);
 					} finally {
 						this._removeSubscriptionObserver(subscriptionId);
 					}
@@ -260,7 +259,6 @@ export class AWSAppSyncRealTimeProvider extends AbstractPubSubProvider {
 				additionalHeaders,
 			});
 		} catch (err) {
-			logger.debug({ err });
 			const message = err['message'] ?? '';
 			observer.error({
 				errors: [
@@ -345,7 +343,6 @@ export class AWSAppSyncRealTimeProvider extends AbstractPubSubProvider {
 			}
 		} catch (err) {
 			// If GQL_STOP is not sent because of disconnection issue, then there is nothing the client can do
-			logger.debug({ err });
 		}
 	}
 
@@ -370,7 +367,6 @@ export class AWSAppSyncRealTimeProvider extends AbstractPubSubProvider {
 			// Still data on the WebSocket
 			setTimeout(this._closeSocketIfRequired.bind(this), 1000);
 		} else {
-			logger.debug('closing WebSocket...');
 			if (this.keepAliveTimeoutId) clearTimeout(this.keepAliveTimeoutId);
 			const tempSocket = this.awsRealTimeSocket;
 			// Cleaning callbacks to avoid race condition, socket still exists
@@ -396,13 +392,10 @@ export class AWSAppSyncRealTimeProvider extends AbstractPubSubProvider {
 			subscriptionFailedCallback,
 		} = this.subscriptionObserverMap.get(id) || {};
 
-		logger.debug({ id, observer, query, variables });
-
 		if (type === MESSAGE_TYPES.GQL_DATA && payload && payload.data) {
 			if (observer) {
 				observer.next(payload);
 			} else {
-				logger.debug(`observer not found for id: ${id}`);
 			}
 			return;
 		}
@@ -479,7 +472,6 @@ export class AWSAppSyncRealTimeProvider extends AbstractPubSubProvider {
 	}
 
 	private _errorDisconnect(msg: string) {
-		logger.debug(`Disconnect error: ${msg}`);
 		this.subscriptionObserverMap.forEach(({ observer }) => {
 			if (observer && !observer.closed) {
 				observer.error({
@@ -588,7 +580,6 @@ export class AWSAppSyncRealTimeProvider extends AbstractPubSubProvider {
 					await this._initializeRetryableHandshake(awsRealTimeUrl);
 
 					this.promiseArray.forEach(({ res }) => {
-						logger.debug('Notifying connection successful');
 						res();
 					});
 					this.socketStatus = SOCKET_STATUS.READY;
@@ -610,7 +601,6 @@ export class AWSAppSyncRealTimeProvider extends AbstractPubSubProvider {
 	}
 
 	private async _initializeRetryableHandshake(awsRealTimeUrl: string) {
-		logger.debug(`Initializaling retryable Handshake`);
 		await jitteredExponentialRetry(
 			this._initializeHandshake.bind(this),
 			[awsRealTimeUrl],
@@ -619,16 +609,13 @@ export class AWSAppSyncRealTimeProvider extends AbstractPubSubProvider {
 	}
 
 	private async _initializeHandshake(awsRealTimeUrl: string) {
-		logger.debug(`Initializing handshake ${awsRealTimeUrl}`);
 		// Because connecting the socket is async, is waiting until connection is open
 		// Step 1: connect websocket
 		try {
 			await (() => {
 				return new Promise<void>((res, rej) => {
 					const newSocket = this.getNewWebSocket(awsRealTimeUrl, 'graphql-ws');
-					newSocket.onerror = () => {
-						logger.debug(`WebSocket connection error`);
-					};
+					newSocket.onerror = () => {};
 					newSocket.onclose = () => {
 						rej(new Error('Connection handshake error'));
 					};
@@ -644,11 +631,8 @@ export class AWSAppSyncRealTimeProvider extends AbstractPubSubProvider {
 				return new Promise((res, rej) => {
 					if (this.awsRealTimeSocket) {
 						let ackOk = false;
-						this.awsRealTimeSocket.onerror = error => {
-							logger.debug(`WebSocket error ${JSON.stringify(error)}`);
-						};
+						this.awsRealTimeSocket.onerror = error => {};
 						this.awsRealTimeSocket.onclose = event => {
-							logger.debug(`WebSocket closed ${event.reason}`);
 							rej(new Error(JSON.stringify(event)));
 						};
 
@@ -670,11 +654,9 @@ export class AWSAppSyncRealTimeProvider extends AbstractPubSubProvider {
 									this.awsRealTimeSocket.onmessage =
 										this._handleIncomingSubscriptionMessage.bind(this);
 									this.awsRealTimeSocket.onerror = err => {
-										logger.debug(err);
 										this._errorDisconnect(CONTROL_MSG.CONNECTION_CLOSED);
 									};
 									this.awsRealTimeSocket.onclose = event => {
-										logger.debug(`WebSocket closed ${event.reason}`);
 										this._errorDisconnect(CONTROL_MSG.CONNECTION_CLOSED);
 									};
 								}
@@ -748,14 +730,11 @@ export class AWSAppSyncRealTimeProvider extends AbstractPubSubProvider {
 		};
 
 		if (!authenticationType || !headerHandler[authenticationType]) {
-			logger.debug(`Authentication type ${authenticationType} not supported`);
 			return '';
 		} else {
 			const handler = headerHandler[authenticationType];
 
 			const { host } = url.parse(appSyncGraphqlEndpoint ?? '');
-
-			logger.debug(`Authenticating with ${authenticationType}`);
 
 			const result = await handler({
 				payload,
@@ -875,7 +854,6 @@ export class AWSAppSyncRealTimeProvider extends AbstractPubSubProvider {
 			.then((credentials: any) => {
 				if (!credentials) return false;
 				const cred = Credentials.shear(credentials);
-				logger.debug('set credentials for AWSAppSyncRealTimeProvider', cred);
 
 				return true;
 			})

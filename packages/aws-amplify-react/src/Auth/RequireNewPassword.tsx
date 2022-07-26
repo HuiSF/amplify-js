@@ -16,7 +16,7 @@ import * as React from 'react';
 import { I18n, ConsoleLogger as Logger, isEmpty } from '@aws-amplify/core';
 import { Auth } from '@aws-amplify/auth';
 
-import { AuthPiece, IAuthPieceProps, IAuthPieceState  } from './AuthPiece';
+import { AuthPiece, IAuthPieceProps, IAuthPieceState } from './AuthPiece';
 import {
 	FormSection,
 	SectionHeader,
@@ -74,11 +74,9 @@ export class RequireNewPassword extends AuthPiece<
 		}
 		Auth.completeNewPassword(user, password, attrs)
 			.then(user => {
-				logger.debug('complete new password', user);
 				if (user.challengeName === 'SMS_MFA') {
 					this.changeState('confirmSignIn', user);
 				} else if (user.challengeName === 'MFA_SETUP') {
-					logger.debug('TOTP setup', user.challengeParam);
 					this.changeState('TOTPSetup', user);
 				} else {
 					this.checkContact(user);

@@ -23,13 +23,12 @@ const getInstance = () => {
 	if (_instance) {
 		return _instance;
 	}
-	logger.debug('Create Storage Instance, debug');
+
 	_instance = new StorageClass();
 	_instance.vault = new StorageClass();
 
 	const old_configure = _instance.configure;
 	_instance.configure = options => {
-		logger.debug('storage configure called');
 		const vaultConfig = { ...old_configure.call(_instance, options) };
 
 		// set level private for each provider for the vault
@@ -41,7 +40,7 @@ const getInstance = () => {
 				};
 			}
 		});
-		logger.debug('storage vault configure called');
+
 		_instance.vault.configure(vaultConfig);
 	};
 	return _instance;

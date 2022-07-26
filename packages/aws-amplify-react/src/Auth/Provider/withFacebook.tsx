@@ -52,9 +52,7 @@ export function withFacebook(Comp) {
 						Constants.AUTH_SOURCE_KEY,
 						JSON.stringify(payload)
 					);
-				} catch (e) {
-					logger.debug('Failed to cache auth source into localStorage', e);
-				}
+				} catch (e) {}
 
 				if (response.status === 'connected') {
 					this.federatedSignIn(response.authResponse);
@@ -75,7 +73,6 @@ export function withFacebook(Comp) {
 		}
 
 		federatedSignIn(response) {
-			logger.debug(response);
 			const { onStateChange } = this.props;
 
 			const { accessToken, expiresIn } = response;
@@ -121,14 +118,12 @@ export function withFacebook(Comp) {
 		signOut() {
 			const fb = window.FB;
 			if (!fb) {
-				logger.debug('FB sdk undefined');
 				return Promise.resolve();
 			}
 
 			fb.getLoginStatus(response => {
 				if (response.status === 'connected') {
 					return new Promise((res, rej) => {
-						logger.debug('facebook signing out');
 						fb.logout(response => {
 							res(response);
 						});
@@ -145,8 +140,6 @@ export function withFacebook(Comp) {
 		}
 
 		fbAsyncInit() {
-			logger.debug('init FB');
-
 			const { facebook_app_id } = this.props;
 			const fb = window.FB;
 			fb.init({
@@ -155,13 +148,10 @@ export function withFacebook(Comp) {
 				xfbml: true,
 				version: 'v2.11',
 			});
-
-			fb.getLoginStatus(response => logger.debug(response));
 		}
 
 		initFB() {
 			const fb = window.FB;
-			logger.debug('FB inited');
 		}
 
 		createScript() {

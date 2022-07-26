@@ -138,7 +138,6 @@ export default class PushNotification {
 			const cacheKey = 'push_token' + appId;
 			RNPushNotification.getToken(
 				token => {
-					logger.debug('Get the token from Firebase Service', token);
 					// resend the token in case it's missing in the Pinpoint service
 					// the token will also be cached locally
 					this.updateEndpoint(token);
@@ -200,9 +199,7 @@ export default class PushNotification {
 						handler(data);
 					}
 				})
-				.catch(e => {
-					logger.debug('Failed to get the initial notification.', e);
-				});
+				.catch(e => {});
 		}
 		this._currentState = nextAppState;
 	}
@@ -250,12 +247,10 @@ export default class PushNotification {
 	};
 
 	handleNotificationReceived(rawMessage) {
-		logger.debug('handleNotificationReceived, raw data', rawMessage);
 		const { eventSource, eventSourceAttributes } =
 			this.parseMessageData(rawMessage);
 
 		if (!eventSource) {
-			logger.debug('message received is not from a pinpoint eventSource');
 			return;
 		}
 
@@ -280,7 +275,6 @@ export default class PushNotification {
 				immediate: false,
 			});
 		} else {
-			logger.debug('Analytics module is not registered into Amplify');
 		}
 	}
 
@@ -289,12 +283,10 @@ export default class PushNotification {
 			handler(rawMessage);
 		});
 
-		logger.debug('handleNotificationOpened, raw data', rawMessage);
 		const { eventSource, eventSourceAttributes } =
 			this.parseMessageData(rawMessage);
 
 		if (!eventSource) {
-			logger.debug('message received is not from a pinpoint eventSource');
 			return;
 		}
 
@@ -311,23 +303,20 @@ export default class PushNotification {
 				immediate: false,
 			});
 		} else {
-			logger.debug('Analytics module is not registered into Amplify');
 		}
 	}
 
 	updateEndpoint(token) {
 		if (!token) {
-			logger.debug('no device token recieved on register');
 			return;
 		}
 
 		const { appId } = this._config;
 		const cacheKey = 'push_token' + appId;
-		logger.debug('update endpoint in push notification', token);
+
 		AsyncStorage.getItem(cacheKey)
 			.then(lastToken => {
 				if (!lastToken || lastToken !== token) {
-					logger.debug('refresh the device token with', token);
 					const config = {
 						Address: token,
 						OptOut: 'NONE',
@@ -345,16 +334,12 @@ export default class PushNotification {
 							})
 							.catch(e => {
 								// ........
-								logger.debug('update endpoint failed', e);
 							});
 					} else {
-						logger.debug('Analytics module is not registered into Amplify');
 					}
 				}
 			})
-			.catch(e => {
-				logger.debug('set device token in cache failed', e);
-			});
+			.catch(e => {});
 	}
 
 	// only for android
@@ -400,12 +385,10 @@ export default class PushNotification {
 		try {
 			dataObj = message.dataJSON ? JSON.parse(message.dataJSON) : null;
 		} catch (e) {
-			logger.debug('Failed to parse the data object', e);
 			return;
 		}
 
 		if (!dataObj) {
-			logger.debug('no notification payload received');
 			return dataObj;
 		}
 
@@ -439,7 +422,6 @@ export default class PushNotification {
 		const _alert = message && message._alert ? message._alert : {};
 
 		if (!_data && !_alert) {
-			logger.debug('no notification payload received');
 			return {};
 		}
 		const data = _data.data;

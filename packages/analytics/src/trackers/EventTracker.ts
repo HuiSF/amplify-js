@@ -31,7 +31,6 @@ export class EventTracker {
 
 	constructor(tracker, opts) {
 		if (!JS.browserOrNode().isBrowser || !window.addEventListener) {
-			logger.debug('not in the supported web environment');
 			return;
 		}
 
@@ -39,8 +38,6 @@ export class EventTracker {
 		this._tracker = tracker;
 		this._delegates = {};
 		this._trackFunc = this._trackFunc.bind(this);
-
-		logger.debug('initialize pageview tracker with opts', this._config);
 
 		this.configure(this._config);
 	}
@@ -105,10 +102,7 @@ export class EventTracker {
 			customAttrs
 		);
 
-		logger.debug('events needed to be recorded', events);
-		logger.debug('attributes needed to be attached', customAttrs);
 		if (events.indexOf(event.type) < 0) {
-			logger.debug(`event ${event.type} is not selected to be recorded`);
 			return;
 		}
 
@@ -118,9 +112,7 @@ export class EventTracker {
 				attributes,
 			},
 			this._config.provider
-		).catch(e => {
-			logger.debug(`Failed to record the ${event.type} event', ${e}`);
-		});
+		).catch(e => {});
 	}
 }
 

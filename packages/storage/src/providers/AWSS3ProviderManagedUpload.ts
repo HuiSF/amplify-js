@@ -97,7 +97,6 @@ export class AWSS3ProviderManagedUpload {
 					start < numberOfPartsToUpload;
 					start += this.queueSize
 				) {
-
 					// Upload as many as `queueSize` parts simultaneously
 					await this.uploadParts(
 						this.uploadId,
@@ -149,7 +148,7 @@ export class AWSS3ProviderManagedUpload {
 				this.params
 			);
 			const response = await this.s3client.send(createMultiPartUploadCommand);
-			logger.debug(response.UploadId);
+
 			return response.UploadId;
 		} catch (error) {
 			logger.error(error);

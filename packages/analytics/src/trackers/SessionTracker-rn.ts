@@ -44,7 +44,6 @@ export class SessionTracker {
 
 	private _envCheck() {
 		if (!AppState) {
-			logger.debug('not in the supported react native environment');
 			return false;
 		}
 		return true;
@@ -61,7 +60,6 @@ export class SessionTracker {
 			this._currentState.match(/inactive|background/) &&
 			nextAppState === 'active'
 		) {
-			logger.debug('App has come to the foreground, recording start session');
 			this._tracker(
 				{
 					name: '_session.start',
@@ -69,9 +67,7 @@ export class SessionTracker {
 					immediate: false,
 				},
 				this._config.provider
-			).catch(e => {
-				logger.debug('record session start event failed.', e);
-			});
+			).catch(e => {});
 		}
 		if (
 			this._currentState.match(/active/) &&
@@ -87,9 +83,7 @@ export class SessionTracker {
 					immediate: false,
 				},
 				this._config.provider
-			).catch(e => {
-				logger.debug('record session stop event failed.', e);
-			});
+			).catch(e => {});
 		}
 
 		this._currentState = nextAppState;
@@ -98,7 +92,6 @@ export class SessionTracker {
 	// to keep configure a synchronized function
 	private async _sendInitialEvent() {
 		if (initialEventSent) {
-			logger.debug('the start session has been sent when the page is loaded');
 			return;
 		} else {
 			initialEventSent = true;
@@ -117,9 +110,7 @@ export class SessionTracker {
 				immediate: false,
 			},
 			this._config.provider
-		).catch(e => {
-			logger.debug('record session start event failed.', e);
-		});
+		).catch(e => {});
 	}
 
 	configure(opts?: SessionTrackOpts) {

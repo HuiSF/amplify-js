@@ -75,7 +75,7 @@ export const parseMobileHubConfig = (config): AmplifyConfig => {
 		amplifyConfig.Logging,
 		config.Logging
 	);
-	logger.debug('parse config', config, 'to amplifyconfig', amplifyConfig);
+
 	return amplifyConfig;
 };
 

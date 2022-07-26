@@ -81,7 +81,6 @@ export class AWSKinesisProvider implements AnalyticsProvider {
 	 * @param {Object} config - configuration
 	 */
 	public configure(config): object {
-		logger.debug('configure Analytics', config);
 		const conf = config || {};
 		this._config = Object.assign({}, this._config, conf);
 
@@ -103,7 +102,6 @@ export class AWSKinesisProvider implements AnalyticsProvider {
 	}
 
 	public updateEndpoint() {
-		logger.debug('updateEndpoint is not implemented in Kinesis provider');
 		return Promise.resolve(true);
 	}
 
@@ -117,7 +115,6 @@ export class AWSKinesisProvider implements AnalyticsProvider {
 			this._buffer.push(params);
 			return Promise.resolve(true);
 		} else {
-			logger.debug('exceed analytics events buffer size');
 			return Promise.reject(false);
 		}
 	}
@@ -138,7 +135,6 @@ export class AWSKinesisProvider implements AnalyticsProvider {
 					cred.sessionToken === preCred.sessionToken &&
 					cred.identityId === preCred.identityId
 				) {
-					logger.debug('no change for cred, put event in the same group');
 					group.push(events[i]);
 				} else {
 					eventsGroups.push(group);
@@ -197,23 +193,17 @@ export class AWSKinesisProvider implements AnalyticsProvider {
 					StreamName: streamName,
 				});
 				await this._kinesis.send(command);
-				logger.debug('Upload records to stream', streamName);
-			} catch (err) {
-				logger.debug('Failed to upload records to Kinesis', err);
-			}
+			} catch (err) {}
 		});
 	}
 
 	protected _init(config, credentials) {
-		logger.debug('init clients');
-
 		if (
 			this._kinesis &&
 			this._config.credentials &&
 			this._config.credentials.sessionToken === credentials.sessionToken &&
 			this._config.credentials.identityId === credentials.identityId
 		) {
-			logger.debug('no change for analytics config, directly return from init');
 			return true;
 		}
 
@@ -224,7 +214,6 @@ export class AWSKinesisProvider implements AnalyticsProvider {
 	}
 
 	private _initKinesis(region, endpoint, credentials) {
-		logger.debug('initialize kinesis with credentials', credentials);
 		this._kinesis = new KinesisClient({
 			region,
 			credentials,
@@ -242,11 +231,10 @@ export class AWSKinesisProvider implements AnalyticsProvider {
 		return Credentials.get()
 			.then(credentials => {
 				if (!credentials) return null;
-				logger.debug('set credentials for analytics', this._config.credentials);
+
 				return Credentials.shear(credentials);
 			})
 			.catch(err => {
-				logger.debug('ensure credentials error', err);
 				return null;
 			});
 	}

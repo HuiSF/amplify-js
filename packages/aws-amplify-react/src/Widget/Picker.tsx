@@ -47,7 +47,6 @@ export class Picker extends React.Component<IPickerProps, {}> {
 		}
 
 		const { name, size, type } = file;
-		logger.debug(file);
 
 		const { onPick } = this.props;
 		if (onPick) {

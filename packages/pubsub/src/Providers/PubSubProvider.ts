@@ -26,8 +26,6 @@ export abstract class AbstractPubSubProvider implements PubSubProvider {
 	configure(config: ProviderOptions = {}): ProviderOptions {
 		this._config = { ...config, ...this._config };
 
-		logger.debug(`configure ${this.getProviderName()}`, this._config);
-
 		return this.options;
 	}
 

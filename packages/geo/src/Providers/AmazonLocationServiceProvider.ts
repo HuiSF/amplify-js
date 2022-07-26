@@ -78,7 +78,6 @@ export class AmazonLocationServiceProvider implements GeoProvider {
 	 */
 	constructor(config?: GeoConfig) {
 		this._config = config ? config : {};
-		logger.debug('Geo Options', this._config);
 	}
 
 	/**
@@ -103,7 +102,6 @@ export class AmazonLocationServiceProvider implements GeoProvider {
 	 * @return {Object} - Current configuration
 	 */
 	public configure(config?): object {
-		logger.debug('configure Amazon Location Service Provider', config);
 		if (!config) return this._config;
 		this._config = Object.assign({}, this._config, config);
 		return this._config;
@@ -202,7 +200,6 @@ export class AmazonLocationServiceProvider implements GeoProvider {
 		try {
 			response = await client.send(command);
 		} catch (error) {
-			logger.debug(error);
 			throw error;
 		}
 
@@ -263,7 +260,6 @@ export class AmazonLocationServiceProvider implements GeoProvider {
 		try {
 			response = await client.send(command);
 		} catch (error) {
-			logger.debug(error);
 			throw error;
 		}
 
@@ -305,7 +301,6 @@ export class AmazonLocationServiceProvider implements GeoProvider {
 		try {
 			this._verifyGeofenceCollections(options?.collectionName);
 		} catch (error) {
-			logger.debug(error);
 			throw error;
 		}
 
@@ -407,7 +402,6 @@ export class AmazonLocationServiceProvider implements GeoProvider {
 		try {
 			this._verifyGeofenceCollections(options?.collectionName);
 		} catch (error) {
-			logger.debug(error);
 			throw error;
 		}
 
@@ -433,7 +427,6 @@ export class AmazonLocationServiceProvider implements GeoProvider {
 		try {
 			response = await client.send(command);
 		} catch (error) {
-			logger.debug(error);
 			throw error;
 		}
 
@@ -471,7 +464,6 @@ export class AmazonLocationServiceProvider implements GeoProvider {
 		try {
 			this._verifyGeofenceCollections(options?.collectionName);
 		} catch (error) {
-			logger.debug(error);
 			throw error;
 		}
 
@@ -499,7 +491,6 @@ export class AmazonLocationServiceProvider implements GeoProvider {
 		try {
 			response = await client.send(command);
 		} catch (error) {
-			logger.debug(error);
 			throw error;
 		}
 
@@ -621,11 +612,10 @@ export class AmazonLocationServiceProvider implements GeoProvider {
 			const credentials = await Credentials.get();
 			if (!credentials) return false;
 			const cred = Credentials.shear(credentials);
-			logger.debug('Set credentials for storage. Credentials are:', cred);
+
 			this._config.credentials = cred;
 			return true;
 		} catch (error) {
-			logger.debug('Ensure credentials error. Credentials are:', error);
 			return false;
 		}
 	}
@@ -634,13 +624,13 @@ export class AmazonLocationServiceProvider implements GeoProvider {
 		if (!this._config.maps) {
 			const errorString =
 				"No map resources found in amplify config, run 'amplify add geo' to create one and run `amplify push` after";
-			logger.debug(errorString);
+
 			throw new Error(errorString);
 		}
 		if (!this._config.maps.default) {
 			const errorString =
 				"No default map resource found in amplify config, run 'amplify add geo' to create one and run `amplify push` after";
-			logger.debug(errorString);
+
 			throw new Error(errorString);
 		}
 	}
@@ -652,7 +642,7 @@ export class AmazonLocationServiceProvider implements GeoProvider {
 		) {
 			const errorString =
 				'No Search Index found in amplify config, please run `amplify add geo` to create one and run `amplify push` after.';
-			logger.debug(errorString);
+
 			throw new Error(errorString);
 		}
 	}
@@ -665,7 +655,7 @@ export class AmazonLocationServiceProvider implements GeoProvider {
 		) {
 			const errorString =
 				'No Geofence Collections found, please run `amplify add geo` to create one and run `amplify push` after.';
-			logger.debug(errorString);
+
 			throw new Error(errorString);
 		}
 	}

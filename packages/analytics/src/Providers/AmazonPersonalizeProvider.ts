@@ -133,7 +133,6 @@ export class AmazonPersonalizeProvider implements AnalyticsProvider {
 					if (isLoaded) {
 						new MediaAutoTrack(requestParams, this);
 					} else {
-						logger.debug('Cannot find the media element.');
 					}
 				} else {
 					logger.debug(
@@ -141,7 +140,6 @@ export class AmazonPersonalizeProvider implements AnalyticsProvider {
 					);
 				}
 			} else {
-				logger.debug('MediaAutoTrack only for browser');
 			}
 			return;
 		}
@@ -211,7 +209,6 @@ export class AmazonPersonalizeProvider implements AnalyticsProvider {
 	 * @param {Object} config - configuration
 	 */
 	public configure(config): object {
-		logger.debug('configure Analytics', config);
 		const conf = config ? config : {};
 		this._config = Object.assign({}, this._config, conf);
 		if (!isEmpty(this._config.trackingId)) {
@@ -248,7 +245,6 @@ export class AmazonPersonalizeProvider implements AnalyticsProvider {
 	private _sendEvents(group) {
 		const groupLen = group.length;
 		if (groupLen === 0) {
-			logger.debug('events array is empty, directly return');
 			return;
 		}
 
@@ -260,10 +256,8 @@ export class AmazonPersonalizeProvider implements AnalyticsProvider {
 			const events: RecordEventPayload[] = [];
 			for (let i = 0; i < groupLen; i += 1) {
 				const params: RequestParams = group.shift();
-				const eventPayload: RecordEventPayload = this._generateSingleRecordPayload(
-					params,
-					sessionInfo
-				);
+				const eventPayload: RecordEventPayload =
+					this._generateSingleRecordPayload(params, sessionInfo);
 				events.push(eventPayload);
 			}
 			const payload = <PutEventsCommandInput>{};
@@ -276,10 +270,7 @@ export class AmazonPersonalizeProvider implements AnalyticsProvider {
 				payload.eventList.push(event);
 			});
 			const command: PutEventsCommand = new PutEventsCommand(payload);
-			this._personalize.send(command, err => {
-				if (err) logger.debug('Failed to call putEvents in Personalize', err);
-				else logger.debug('Put events');
-			});
+			this._personalize.send(command, err => {});
 		}
 	}
 
@@ -322,7 +313,6 @@ export class AmazonPersonalizeProvider implements AnalyticsProvider {
 					cred.sessionToken === preCred.sessionToken &&
 					cred.identityId === preCred.identityId
 				) {
-					logger.debug('no change for cred, put event in the same group');
 					group.push(currRequestParams);
 				} else {
 					eventsGroups.push(group);
@@ -366,21 +356,18 @@ export class AmazonPersonalizeProvider implements AnalyticsProvider {
 	 * @param params - RequestParams
 	 */
 	private _init(config, credentials) {
-		logger.debug('init clients');
-
 		if (
 			this._personalize &&
 			this._config.credentials &&
 			this._config.credentials.sessionToken === credentials.sessionToken &&
 			this._config.credentials.identityId === credentials.identityId
 		) {
-			logger.debug('no change for analytics config, directly return from init');
 			return true;
 		}
 
 		this._config.credentials = credentials;
 		const { region } = config;
-		logger.debug('initialize personalize with credentials', credentials);
+
 		this._personalize = new PersonalizeEventsClient({
 			region,
 			credentials,
@@ -398,11 +385,10 @@ export class AmazonPersonalizeProvider implements AnalyticsProvider {
 		return Credentials.get()
 			.then(credentials => {
 				if (!credentials) return null;
-				logger.debug('set credentials for analytics', that._config.credentials);
+
 				return Credentials.shear(credentials);
 			})
 			.catch(err => {
-				logger.debug('ensure credentials error', err);
 				return null;
 			});
 	}

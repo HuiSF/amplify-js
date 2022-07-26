@@ -49,7 +49,6 @@ export default class VerifyContact extends AuthPiece<IVerifyContactProps, IVerif
 		if (props.authData) {
 			const { unverified } = props.authData;
 			if (!unverified) {
-				logger.debug('no unverified contact');
 				return null;
 			}
 
@@ -81,7 +80,6 @@ export default class VerifyContact extends AuthPiece<IVerifyContactProps, IVerif
 		const that = this;
 		Auth.verifyCurrentUserAttribute(attr)
 			.then((data) => {
-				logger.debug(data);
 				that.setState({ verifyAttr: attr });
 			})
 			.catch((err) => this.error(err));
@@ -92,7 +90,6 @@ export default class VerifyContact extends AuthPiece<IVerifyContactProps, IVerif
 		const { code } = this.state;
 		Auth.verifyCurrentUserAttributeSubmit(attr, code)
 			.then((data) => {
-				logger.debug(data);
 				this.changeState('signedIn', this.props.authData);
 			})
 			.catch((err) => this.error(err));
@@ -144,7 +141,6 @@ export default class VerifyContact extends AuthPiece<IVerifyContactProps, IVerif
 	verifyBody(theme: AmplifyThemeType) {
 		const { unverified } = this.props.authData;
 		if (!unverified) {
-			logger.debug('no unverified contact');
 			return null;
 		}
 

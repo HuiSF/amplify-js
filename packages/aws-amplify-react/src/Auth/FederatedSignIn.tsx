@@ -202,7 +202,6 @@ export class FederatedSignIn extends React.Component<any, any> {
 		}
 
 		if (!federated) {
-			logger.debug('federated prop is empty. show nothing');
 			logger.debug(
 				'federated={google_client_id: , facebook_app_id: , amazon_client_id}'
 			);
@@ -212,7 +211,7 @@ export class FederatedSignIn extends React.Component<any, any> {
 		if (!['signIn', 'signedOut', 'signedUp'].includes(authState)) {
 			return null;
 		}
-		logger.debug('federated Config is', federated);
+
 		const theme = this.props.theme || AmplifyTheme;
 		return (
 			<FormSection theme={theme} data-test={auth.federatedSignIn.section}>

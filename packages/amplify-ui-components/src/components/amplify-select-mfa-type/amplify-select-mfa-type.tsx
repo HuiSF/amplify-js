@@ -94,7 +94,6 @@ export class AmplifySelectMFAType {
 		try {
 			const preferredMFAData = await Auth.setPreferredMFA(user, this.MFAMethod);
 
-			logger.debug('Set Preferred MFA Succeeded', preferredMFAData);
 			this.selectMessage = `${I18n.get(Translations.SUCCESS_MFA_TYPE)} ${
 				this.MFAMethod
 			}`;
@@ -108,7 +107,6 @@ export class AmplifySelectMFAType {
 				this.TOTPSetup = true;
 				this.selectMessage = I18n.get(Translations.SETUP_TOTP_REQUIRED);
 			} else {
-				logger.debug('Set Preferred MFA failed', error);
 				this.selectMessage = I18n.get(
 					Translations.UNABLE_TO_SETUP_MFA_AT_THIS_TIME
 				);
@@ -121,7 +119,6 @@ export class AmplifySelectMFAType {
 
 	private contentBuilder() {
 		if (!this.MFATypes || Object.keys(this.MFATypes).length < 2) {
-			logger.debug(I18n.get(Translations.LESS_THAN_TWO_MFA_VALUES_MESSAGE));
 			return (
 				<div>
 					<a>{I18n.get(Translations.LESS_THAN_TWO_MFA_VALUES_MESSAGE)}</a>

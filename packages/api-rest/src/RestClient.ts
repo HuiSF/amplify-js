@@ -67,7 +67,7 @@ export class RestClient {
 	 */
 	constructor(options: apiOptions) {
 		this._options = options;
-		logger.debug('API Options', this._options);
+
 		if (this._cancelTokenMap == null) {
 			this._cancelTokenMap = new WeakMap();
 		}
@@ -89,8 +89,6 @@ export class RestClient {
 	 * @return {Promise} - A promise that resolves to an object with response status and JSON data, if successful.
 	 */
 	async ajax(urlOrApiInfo: string | ApiInfo, method: string, init) {
-		logger.debug(method, urlOrApiInfo);
-
 		let parsed_url;
 		let url: string;
 		let region: string = 'us-east-1';
@@ -219,7 +217,6 @@ export class RestClient {
 				});
 			},
 			err => {
-				logger.debug('No credentials available, the request will be unsigned');
 				return this._request(params, isAllResponse);
 			}
 		);
@@ -406,14 +403,11 @@ export class RestClient {
 			signed_params.body = signed_params.data;
 		}
 
-		logger.debug('Signed Request: ', signed_params);
-
 		delete signed_params.headers['host'];
 
 		return axios(signed_params)
 			.then(response => (isAllResponse ? response : response.data))
 			.catch(error => {
-				logger.debug(error);
 				throw error;
 			});
 	}
@@ -422,7 +416,6 @@ export class RestClient {
 		return axios(params)
 			.then(response => (isAllResponse ? response : response.data))
 			.catch(error => {
-				logger.debug(error);
 				throw error;
 			});
 	}

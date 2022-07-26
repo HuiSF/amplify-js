@@ -63,11 +63,8 @@ export function withAuth0(Comp, options?) {
 			const config = this.props.auth0 || options || oauth.auth0;
 			const { onError, onStateChange, authState } = this.props;
 			if (!config) {
-				logger.debug('Auth0 is not configured');
 				return;
 			}
-
-			logger.debug('withAuth0 configuration', config);
 
 			if (!this._auth0) {
 				this._auth0 = new window['auth0'].WebAuth(config);
@@ -77,7 +74,6 @@ export function withAuth0(Comp, options?) {
 			if (authState !== 'signedIn') {
 				this._auth0.parseHash((err, authResult) => {
 					if (err || !authResult) {
-						logger.debug('Failed to parse the url for Auth0', err);
 						return;
 					}
 					const payload = {
@@ -94,16 +90,13 @@ export function withAuth0(Comp, options?) {
 							Constants.AUTH_SOURCE_KEY,
 							JSON.stringify(payload)
 						);
-					} catch (e) {
-						logger.debug('Failed to cache auth source into localStorage', e);
-					}
+					} catch (e) {}
 
 					this._auth0.client.userInfo(authResult.accessToken, (err, user) => {
 						let username = undefined;
 						let email = undefined;
 						let picture = undefined;
 						if (err) {
-							logger.debug('Failed to get the user info', err);
 						} else {
 							username = user.name;
 							email = user.email;
@@ -130,7 +123,6 @@ export function withAuth0(Comp, options?) {
 								}
 							})
 							.catch(e => {
-								logger.debug('Failed to get the aws credentials', e);
 								if (onError) onError(e);
 							});
 					});
@@ -150,7 +142,6 @@ export function withAuth0(Comp, options?) {
 			// @ts-ignore
 			const { returnTo, clientID, federated } = opts;
 			if (!auth0) {
-				logger.debug('auth0 sdk undefined');
 				return Promise.resolve();
 			}
 			auth0.logout({

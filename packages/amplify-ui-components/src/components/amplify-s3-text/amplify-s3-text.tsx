@@ -44,12 +44,10 @@ export class AmplifyS3Text {
 	private async load() {
 		const { path, textKey, body, contentType, level, track, identityId } = this;
 		if (!textKey && !path) {
-			logger.debug('empty textKey and path');
 			return;
 		}
 
 		const key = textKey || path;
-		logger.debug('loading ' + key + '...');
 
 		if (body) {
 			await putStorageObject(textKey, body, level, track, contentType, logger);
@@ -57,7 +55,6 @@ export class AmplifyS3Text {
 		try {
 			this.src = await getTextSource(key, level, track, identityId, logger);
 		} catch (err) {
-			logger.debug(err);
 			throw new Error(err);
 		}
 	}

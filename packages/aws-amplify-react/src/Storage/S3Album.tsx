@@ -88,7 +88,6 @@ export class S3Album extends React.Component<IS3AlbumProps, IS3AlbumState> {
 				key = encodeURI(JSON.stringify(fileToKey));
 			}
 			if (!key) {
-				logger.debug('key is empty');
 				key = 'empty_key';
 			}
 		}
@@ -118,20 +117,17 @@ export class S3Album extends React.Component<IS3AlbumProps, IS3AlbumState> {
 			track,
 		})
 			.then(data => {
-				logger.debug('handle pick data', data);
 				const { items } = this.state;
 				if (items.filter(item => item.key === key).length === 0) {
 					const list = items.concat(data);
 					this.marshal(list);
 				} else {
-					logger.debug('update an item');
 				}
 				if (onLoad) {
 					onLoad(data);
 				}
 			})
 			.catch(err => {
-				logger.debug('handle pick error', err);
 				if (onError) {
 					onError(err);
 				}
@@ -194,7 +190,7 @@ export class S3Album extends React.Component<IS3AlbumProps, IS3AlbumState> {
 
 	list() {
 		const { path, level, track, identityId } = this.props;
-		logger.debug('Album path: ' + path);
+
 		if (!Storage || typeof Storage.list !== 'function') {
 			throw new Error(
 				'No Storage module found, please ensure @aws-amplify/storage is imported'
@@ -206,7 +202,6 @@ export class S3Album extends React.Component<IS3AlbumProps, IS3AlbumState> {
 			identityId,
 		})
 			.then(data => {
-				logger.debug('album list', data);
 				this.marshal(data);
 			})
 			.catch(err => {
@@ -294,18 +289,18 @@ export class S3Album extends React.Component<IS3AlbumProps, IS3AlbumState> {
 					onClick={() => this.handleClick(item)}
 				/>
 			) : (
-					<S3Image
-						key={item.key}
-						imgKey={item.key}
-						theme={theme}
-						style={theme.albumPhoto}
-						selected={item.selected}
-						translate={translateItem}
-						level={level}
-						identityId={identityId}
-						onClick={() => this.handleClick(item)}
-					/>
-				);
+				<S3Image
+					key={item.key}
+					imgKey={item.key}
+					theme={theme}
+					style={theme.albumPhoto}
+					selected={item.selected}
+					translate={translateItem}
+					level={level}
+					identityId={identityId}
+					onClick={() => this.handleClick(item)}
+				/>
+			);
 		});
 		return (
 			<div>

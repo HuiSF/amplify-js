@@ -72,7 +72,6 @@ export class GraphQLAPIClass {
 	 */
 	constructor(options) {
 		this._options = options;
-		logger.debug('API Options', this._options);
 	}
 
 	public getModuleName() {
@@ -87,7 +86,6 @@ export class GraphQLAPIClass {
 	configure(options) {
 		const { API = {}, ...otherOptions } = options || {};
 		let opt = { ...otherOptions, ...API };
-		logger.debug('configure GraphQL API', { opt });
 
 		if (opt['aws_project_region']) {
 			opt = Object.assign({}, opt, {
@@ -116,7 +114,6 @@ export class GraphQLAPIClass {
 	 * @return - A promise of true if Success
 	 */
 	createInstance() {
-		logger.debug('create Rest instance');
 		if (this._options) {
 			this._api = new RestClient(this._options);
 			// Share instance Credentials with client for SSR
@@ -419,7 +416,6 @@ export class GraphQLAPIClass {
 				authToken,
 			});
 		} else {
-			logger.debug('No pubsub module applied for subscription');
 			throw new Error('No pubsub module applied for subscription');
 		}
 	}
@@ -432,7 +428,6 @@ export class GraphQLAPIClass {
 			.then(credentials => {
 				if (!credentials) return false;
 				const cred = this.Credentials.shear(credentials);
-				logger.debug('set credentials for api', cred);
 
 				return true;
 			})

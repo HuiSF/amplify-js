@@ -44,7 +44,6 @@ export function withAmazon(Comp) {
 			const options = { scope: 'profile' };
 			amz.Login.authorize(options, response => {
 				if (response.error) {
-					logger.debug('Failed to login with amazon: ' + response.error);
 					return;
 				}
 
@@ -56,9 +55,7 @@ export function withAmazon(Comp) {
 						Constants.AUTH_SOURCE_KEY,
 						JSON.stringify(payload)
 					);
-				} catch (e) {
-					logger.debug('Failed to cache auth source into localStorage', e);
-				}
+				} catch (e) {}
 
 				this.federatedSignIn(response);
 			});
@@ -76,7 +73,6 @@ export function withAmazon(Comp) {
 			const amz = window.amazon;
 			amz.Login.retrieveProfile(userInfo => {
 				if (!userInfo.success) {
-					logger.debug('Get user Info failed');
 					return;
 				}
 
@@ -113,11 +109,9 @@ export function withAmazon(Comp) {
 		signOut() {
 			const amz = window.amazon;
 			if (!amz) {
-				logger.debug('Amazon Login sdk undefined');
 				return Promise.resolve();
 			}
 
-			logger.debug('Amazon signing out');
 			amz.Login.logout();
 		}
 
@@ -135,7 +129,6 @@ export function withAmazon(Comp) {
 		}
 
 		initAmazon() {
-			logger.debug('init amazon');
 			const { amazon_client_id } = this.props;
 			const amz = window.amazon;
 			amz.Login.setClientId(amazon_client_id);

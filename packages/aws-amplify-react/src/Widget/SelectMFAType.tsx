@@ -51,7 +51,7 @@ export interface ISelectMFATypeState {
 export class SelectMFAType extends React.Component<
 	ISelectMFATypeProps,
 	ISelectMFATypeState
-	> {
+> {
 	public inputs: any;
 	constructor(props) {
 		super(props);
@@ -79,9 +79,7 @@ export class SelectMFAType extends React.Component<
 	}
 
 	verify() {
-		logger.debug('mfatypes inputs', this.inputs);
 		if (!this.inputs) {
-			logger.debug('No mfa type selected');
 			return;
 		}
 		const { TOTP, SMS, NOMFA } = this.inputs;
@@ -104,7 +102,6 @@ export class SelectMFAType extends React.Component<
 
 		Auth.setPreferredMFA(user, mfaMethod)
 			.then(data => {
-				logger.debug('set preferred mfa success', data);
 				this.setState({
 					selectMessage: 'Success! Your MFA Type is now: ' + mfaMethod,
 					showToast: true,
@@ -122,7 +119,6 @@ export class SelectMFAType extends React.Component<
 						showToast: true,
 					});
 				} else {
-					logger.debug('set preferred mfa failed', err);
 					this.setState({
 						selectMessage: 'Failed! You cannot select MFA Type for now!',
 						showToast: true,
@@ -134,7 +130,6 @@ export class SelectMFAType extends React.Component<
 	selectView(theme) {
 		const { MFATypes } = this.props;
 		if (!MFATypes || Object.keys(MFATypes).length < 2) {
-			logger.debug('less than 2 mfa types available');
 			return (
 				<div>
 					<a>less than 2 mfa types available</a>

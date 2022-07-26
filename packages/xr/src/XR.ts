@@ -32,7 +32,7 @@ export class XRClass {
 	 */
 	constructor(options: XROptions) {
 		this._options = options;
-		logger.debug('XR Options', this._options);
+
 		this._defaultProvider = DEFAULT_PROVIDER_NAME;
 		this._pluggables = {};
 
@@ -48,7 +48,6 @@ export class XRClass {
 	 */
 	configure(options: XROptions) {
 		const opt = options ? options.XR || options : {};
-		logger.debug('configure XR', { opt });
 
 		this._options = Object.assign({}, this._options, opt);
 

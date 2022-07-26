@@ -33,7 +33,7 @@ export class InteractionsClass {
 	 */
 	constructor(options: InteractionsOptions) {
 		this._options = options;
-		logger.debug('Interactions Options', this._options);
+
 		this._pluggables = {};
 	}
 
@@ -48,7 +48,7 @@ export class InteractionsClass {
 	 */
 	configure(options: InteractionsOptions) {
 		const opt = options ? options.Interactions || options : {};
-		logger.debug('configure Interactions', { opt });
+
 		this._options = { bots: {}, ...opt, ...opt.Interactions };
 
 		const aws_bots_config = this._options.aws_bots_config;

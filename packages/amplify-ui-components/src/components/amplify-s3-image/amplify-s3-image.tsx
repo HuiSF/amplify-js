@@ -51,12 +51,10 @@ export class AmplifyS3Image {
 	private async load() {
 		const { imgKey, path, body, contentType, level, track, identityId } = this;
 		if (!imgKey && !path) {
-			logger.debug('empty imgKey and path');
 			return;
 		}
 
 		const key = imgKey || path;
-		logger.debug('loading ' + key + '...');
 
 		try {
 			if (body) {
@@ -64,7 +62,6 @@ export class AmplifyS3Image {
 			}
 			this.src = await getStorageObject(key, level, track, identityId, logger);
 		} catch (err) {
-			logger.debug(err);
 			throw new Error(err);
 		}
 	}

@@ -36,15 +36,11 @@ export async function retry(
 	try {
 		return await functionToRetry(...args);
 	} catch (err) {
-		logger.debug(`error on ${functionToRetry.name}`, err);
-
 		if (isNonRetryableError(err)) {
-			logger.debug(`${functionToRetry.name} non retryable error`, err);
 			throw err;
 		}
 
 		const retryIn = delayFn(attempt, args, err);
-		logger.debug(`${functionToRetry.name} retrying in ${retryIn} ms`);
 
 		if (retryIn !== false) {
 			await new Promise(res => setTimeout(res, retryIn));

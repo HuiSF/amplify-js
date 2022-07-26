@@ -42,7 +42,6 @@ export class AmplifyS3TextPicker {
 			await putStorageObject(key, file, level, track, file['type'], logger);
 			this.src = key;
 		} catch (error) {
-			logger.debug(error);
 			throw new Error(error);
 		}
 	}

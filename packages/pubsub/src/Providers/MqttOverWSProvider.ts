@@ -147,11 +147,9 @@ export class MqttOverWSProvider extends AbstractPubSubProvider {
 	}
 
 	public async newClient({ url, clientId }: MqttProviderOptions): Promise<any> {
-		logger.debug('Creating new MQTT client', clientId);
-
 		// @ts-ignore
 		const client = new Paho.Client(url, clientId);
-		// client.trace = (args) => logger.debug(clientId, JSON.stringify(args, null, 2));
+
 		client.onMessageArrived = ({
 			destinationName: topic,
 			payloadString: msg,
@@ -208,7 +206,6 @@ export class MqttOverWSProvider extends AbstractPubSubProvider {
 
 		const client = await this.connect(this.clientId, { url });
 
-		logger.debug('Publishing to topic(s)', targetTopics.join(','), message);
 		targetTopics.forEach(topic => client.send(topic, message));
 	}
 
@@ -245,7 +242,6 @@ export class MqttOverWSProvider extends AbstractPubSubProvider {
 		options: MqttProviderOptions = {}
 	): Observable<any> {
 		const targetTopics = ([] as string[]).concat(topics);
-		logger.debug('Subscribing to topic(s)', targetTopics.join(','));
 
 		return new Observable(observer => {
 			targetTopics.forEach(topic => {
@@ -287,8 +283,6 @@ export class MqttOverWSProvider extends AbstractPubSubProvider {
 			})();
 
 			return () => {
-				logger.debug('Unsubscribing from topic(s)', targetTopics.join(','));
-
 				if (client) {
 					this._clientIdObservers.get(clientId)?.delete(observer);
 					// No more observers per client => client not needed anymore

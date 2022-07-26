@@ -68,7 +68,6 @@ export class Storage {
 		this._config = {};
 		this._pluggables = [];
 		this._cancelTokenSourceMap = new WeakMap<Promise<any>, CancelTokenSource>();
-		logger.debug('Storage Options', this._config);
 
 		this.get = this.get.bind(this);
 		this.put = this.put.bind(this);
@@ -104,7 +103,6 @@ export class Storage {
 			pluggable => pluggable.getProviderName() === providerName
 		);
 		if (pluggable === undefined) {
-			logger.debug('No plugin found with providerName', providerName);
 			return null;
 		} else return pluggable;
 	}
@@ -126,7 +124,6 @@ export class Storage {
 	 * @return {Object} - Current configuration
 	 */
 	configure(config?) {
-		logger.debug('configure Storage');
 		if (!config) return this._config;
 
 		const amplifyConfig = Parser.parseMobilehubConfig(config);
@@ -227,7 +224,6 @@ export class Storage {
 		if (cancelTokenSource) {
 			cancelTokenSource.cancel(message);
 		} else {
-			logger.debug('The request does not map to any cancel token');
 		}
 	}
 
@@ -254,7 +250,6 @@ export class Storage {
 			pluggable => pluggable.getProviderName() === provider
 		);
 		if (prov === undefined) {
-			logger.debug('No plugin found with providerName', provider);
 			return Promise.reject(
 				'No plugin found in Storage for the provider'
 			) as StorageCopyOutput<T>;
@@ -293,7 +288,6 @@ export class Storage {
 			pluggable => pluggable.getProviderName() === provider
 		);
 		if (prov === undefined) {
-			logger.debug('No plugin found with providerName', provider);
 			return Promise.reject(
 				'No plugin found in Storage for the provider'
 			) as StorageGetOutput<T>;
@@ -334,7 +328,6 @@ export class Storage {
 			pluggable => pluggable.getProviderName() === provider
 		);
 		if (prov === undefined) {
-			logger.debug('No plugin found with providerName', provider);
 			return Promise.reject(
 				'No plugin found in Storage for the provider'
 			) as StoragePutOutput<T>;
@@ -369,7 +362,6 @@ export class Storage {
 			pluggable => pluggable.getProviderName() === provider
 		);
 		if (prov === undefined) {
-			logger.debug('No plugin found with providerName', provider);
 			return Promise.reject(
 				'No plugin found in Storage for the provider'
 			) as StorageRemoveOutput<T>;
@@ -396,7 +388,6 @@ export class Storage {
 			pluggable => pluggable.getProviderName() === provider
 		);
 		if (prov === undefined) {
-			logger.debug('No plugin found with providerName', provider);
 			return Promise.reject(
 				'No plugin found in Storage for the provider'
 			) as StorageListOutput<T>;

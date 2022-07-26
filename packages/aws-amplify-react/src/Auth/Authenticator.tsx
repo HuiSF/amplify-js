@@ -127,16 +127,12 @@ export class Authenticator extends React.Component<
 				let cachedAuthState = null;
 				try {
 					cachedAuthState = localStorage.getItem(AUTHENTICATOR_AUTHSTATE);
-				} catch (e) {
-					logger.debug('Failed to get the auth state from local storage', e);
-				}
+				} catch (e) {}
 				const promise =
 					cachedAuthState === 'signedIn' ? Auth.signOut() : Promise.resolve();
 				promise
 					.then(() => this.handleStateChange(this._initialAuthState))
-					.catch(e => {
-						logger.debug('Failed to sign out', e);
-					});
+					.catch(e => {});
 			});
 	}
 
@@ -183,7 +179,6 @@ export class Authenticator extends React.Component<
 	}
 
 	handleStateChange(state, data?) {
-		logger.debug('authenticator state change ' + state, data);
 		if (state === this.state.authState) {
 			return;
 		}
@@ -193,9 +188,7 @@ export class Authenticator extends React.Component<
 		}
 		try {
 			localStorage.setItem(AUTHENTICATOR_AUTHSTATE, state);
-		} catch (e) {
-			logger.debug('Failed to set the auth state into local storage', e);
-		}
+		} catch (e) {}
 
 		if (this._isMounted) {
 			this.setState({

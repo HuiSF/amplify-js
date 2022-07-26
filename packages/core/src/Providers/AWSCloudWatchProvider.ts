@@ -131,8 +131,6 @@ class AWSCloudWatchProvider implements LoggingProvider {
 	public async getLogGroups(
 		params: DescribeLogGroupsCommandInput
 	): Promise<DescribeLogGroupsCommandOutput> {
-		logger.debug('getting list of log groups');
-
 		const cmd = new DescribeLogGroupsCommand(params);
 
 		try {
@@ -177,7 +175,6 @@ class AWSCloudWatchProvider implements LoggingProvider {
 	public async getLogStreams(
 		params: DescribeLogStreamsCommandInput
 	): Promise<DescribeLogStreamsCommandOutput> {
-		logger.debug('getting list of log streams');
 		const cmd = new DescribeLogStreamsCommand(params);
 
 		try {
@@ -198,7 +195,6 @@ class AWSCloudWatchProvider implements LoggingProvider {
 	public async getLogEvents(
 		params: GetLogEventsCommandInput
 	): Promise<GetLogEventsCommandOutput> {
-		logger.debug('getting log events from stream - ', params.logStreamName);
 		const cmd = new GetLogEventsCommand(params);
 
 		try {
@@ -217,7 +213,6 @@ class AWSCloudWatchProvider implements LoggingProvider {
 	}
 
 	public pushLogs(logs: InputLogEvent[]): void {
-		logger.debug('pushing log events to Cloudwatch...');
 		this._dataTracker.logEvents = [...this._dataTracker.logEvents, ...logs];
 	}
 
@@ -315,7 +310,6 @@ class AWSCloudWatchProvider implements LoggingProvider {
 				throw new Error(NO_CREDS_ERROR_STRING);
 			}
 
-			logger.debug('sending log events to stream - ', params.logStreamName);
 			const cmd = new PutLogEventsCommand(params);
 			const client = this._initCloudWatchLogs();
 			const output = await client.send(cmd);
@@ -341,7 +335,7 @@ class AWSCloudWatchProvider implements LoggingProvider {
 			.then(credentials => {
 				if (!credentials) return false;
 				const cred = Credentials.shear(credentials);
-				logger.debug('set credentials for logging', cred);
+
 				this._config.credentials = cred;
 
 				return true;

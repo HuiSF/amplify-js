@@ -18,13 +18,11 @@ const logger = new Logger('CognitoCredentials');
 
 const waitForInit = new Promise((res, rej) => {
 	if (!browserOrNode().isBrowser) {
-		logger.debug('not in the browser, directly resolved');
 		return res();
 	}
 	const ga =
 		window['gapi'] && window['gapi'].auth2 ? window['gapi'].auth2 : null;
 	if (ga) {
-		logger.debug('google api already loaded');
 		return res();
 	} else {
 		setTimeout(() => {
@@ -43,10 +41,8 @@ export class GoogleOAuth {
 
 	public async refreshGoogleToken() {
 		if (!this.initialized) {
-			logger.debug('need to wait for the Google SDK loaded');
 			await waitForInit;
 			this.initialized = true;
-			logger.debug('finish waiting');
 		}
 
 		return this._refreshGoogleTokenImpl();
@@ -57,7 +53,6 @@ export class GoogleOAuth {
 		if (browserOrNode().isBrowser)
 			ga = window['gapi'] && window['gapi'].auth2 ? window['gapi'].auth2 : null;
 		if (!ga) {
-			logger.debug('no gapi auth2 available');
 			return Promise.reject('no gapi auth2 available');
 		}
 
@@ -65,14 +60,12 @@ export class GoogleOAuth {
 			ga.getAuthInstance()
 				.then(googleAuth => {
 					if (!googleAuth) {
-						logger.debug('google Auth undefined');
 						rej(new NonRetryableError('google Auth undefined'));
 					}
 
 					const googleUser = googleAuth.currentUser.get();
 					// refresh the token
 					if (googleUser.isSignedIn()) {
-						logger.debug('refreshing the google access token');
 						googleUser
 							.reloadAuthResponse()
 							.then(authResponse => {
@@ -96,7 +89,6 @@ export class GoogleOAuth {
 					}
 				})
 				.catch(err => {
-					logger.debug('Failed to refresh google token', err);
 					rej(new NonRetryableError('Failed to refresh google token'));
 				});
 		});

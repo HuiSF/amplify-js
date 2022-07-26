@@ -48,7 +48,6 @@ export class AmplifyVerifyContact {
 		try {
 			const data = await Auth.verifyCurrentUserAttributeSubmit(attr, code);
 
-			logger.debug(data);
 			this.handleAuthStateChange(AuthState.SignedIn, this.user);
 			this.verifyAttr = null;
 		} catch (error) {
@@ -73,7 +72,6 @@ export class AmplifyVerifyContact {
 		try {
 			const data = await Auth.verifyCurrentUserAttribute(contact);
 
-			logger.debug(data);
 			this.verifyAttr = contact;
 		} catch (error) {
 			dispatchToastHubEvent(error);
@@ -112,14 +110,12 @@ export class AmplifyVerifyContact {
 		const user = this.user;
 
 		if (!user) {
-			logger.debug('No user to verify');
 			return null;
 		}
 
 		const { unverified } = user;
 
 		if (!unverified) {
-			logger.debug('Unverified variable does not exist on user');
 			return null;
 		}
 		const { email, phone_number } = unverified;

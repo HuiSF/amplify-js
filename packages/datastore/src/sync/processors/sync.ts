@@ -134,7 +134,7 @@ class SyncProcessor {
 				authModeAttempts++;
 				if (authModeAttempts >= readAuthModes.length) {
 					const authMode = readAuthModes[authModeAttempts - 1];
-					logger.debug(`Sync failed with authMode: ${authMode}`, error);
+
 					if (getClientSideAuthError(error) || getForbiddenError(error)) {
 						// return empty list of data so DataStore will continue to sync other models
 						logger.warn(

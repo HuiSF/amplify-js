@@ -36,7 +36,6 @@ export class AsyncStorageCache extends StorageCache implements ICache {
 		this.getItem = this.getItem.bind(this);
 		this.setItem = this.setItem.bind(this);
 		this.removeItem = this.removeItem.bind(this);
-		logger.debug('Using AsyncStorageCache');
 	}
 
 	/**
@@ -342,7 +341,6 @@ export class AsyncStorageCache extends StorageCache implements ICache {
 	 * @return {Promise} - return a promise resolves to be the value of the item
 	 */
 	async getItem(key, options) {
-		logger.debug(`Get item: key is ${key} with options ${options}`);
 		let ret = null;
 		const prefixedKey = this.config.keyPrefix + key;
 
@@ -390,7 +388,6 @@ export class AsyncStorageCache extends StorageCache implements ICache {
 	 * @return {Promise}
 	 */
 	async removeItem(key) {
-		logger.debug(`Remove item: key is ${key}`);
 		const prefixedKey = this.config.keyPrefix + key;
 
 		if (
@@ -417,7 +414,6 @@ export class AsyncStorageCache extends StorageCache implements ICache {
 	 * @return {Promise}
 	 */
 	async clear() {
-		logger.debug(`Clear Cache`);
 		try {
 			const keys = await AsyncStorage.getAllKeys();
 

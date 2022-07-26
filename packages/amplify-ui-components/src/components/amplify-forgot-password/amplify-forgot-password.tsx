@@ -221,7 +221,7 @@ export class AmplifyForgotPassword {
 			const data = await Auth.forgotPassword(
 				this.forgotPasswordAttrs.userInput.trim()
 			);
-			logger.debug(data);
+
 			this.newFormFields = [
 				{
 					type: 'code',
@@ -262,7 +262,7 @@ export class AmplifyForgotPassword {
 				code,
 				password
 			);
-			logger.debug(data);
+
 			this.handleAuthStateChange(AuthState.SignIn);
 			this.delivery = null;
 		} catch (error) {

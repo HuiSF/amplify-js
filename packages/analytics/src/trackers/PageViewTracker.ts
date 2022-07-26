@@ -35,7 +35,6 @@ export class PageViewTracker {
 	private _hasEnabled;
 
 	constructor(tracker, opts) {
-		logger.debug('initialize pageview tracker with opts', opts);
 		this._config = Object.assign({}, defaultOpts, opts);
 		this._tracker = tracker;
 		this._hasEnabled = false;
@@ -64,7 +63,6 @@ export class PageViewTracker {
 		const curUrl = this._config.getUrl();
 
 		if (prevUrl === curUrl) {
-			logger.debug('the url is same');
 			return true;
 		} else return false;
 	}
@@ -75,7 +73,6 @@ export class PageViewTracker {
 			!window.addEventListener ||
 			!window.sessionStorage
 		) {
-			logger.debug('not in the supported web enviroment');
 			return;
 		}
 		const url = this._config.getUrl();
@@ -97,9 +94,7 @@ export class PageViewTracker {
 					attributes,
 				},
 				this._config.provider
-			).catch(e => {
-				logger.debug('Failed to record the page view event', e);
-			});
+			).catch(e => {});
 			sessionStorage.setItem(PREV_URL_KEY, url);
 		}
 	}
@@ -111,7 +106,6 @@ export class PageViewTracker {
 			!history.pushState ||
 			!window.sessionStorage
 		) {
-			logger.debug('not in the supported web enviroment');
 			return;
 		}
 
@@ -134,9 +128,7 @@ export class PageViewTracker {
 					attributes,
 				},
 				this._config.provider
-			).catch(e => {
-				logger.debug('Failed to record the page view event', e);
-			});
+			).catch(e => {});
 			sessionStorage.setItem(PREV_URL_KEY, url);
 		}
 	}
@@ -147,7 +139,6 @@ export class PageViewTracker {
 			!window.addEventListener ||
 			!history.pushState
 		) {
-			logger.debug('not in the supported web enviroment');
 			return;
 		}
 

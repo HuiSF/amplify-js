@@ -73,35 +73,29 @@ export class S3Image extends React.Component<IS3ImageProps, IS3ImageState> {
 				'No Storage module found, please ensure @aws-amplify/storage is imported'
 			);
 		}
-		Storage.get(key, { level: level ? level : 'public', track, identityId })
-			.then(url => {
-				if (this._isMounted) {
-					this.setState({
-						src: url,
-					});
-				}
-			})
-			.catch(err => logger.debug(err));
+		Storage.get(key, {
+			level: level ? level : 'public',
+			track,
+			identityId,
+		}).then(url => {
+			if (this._isMounted) {
+				this.setState({
+					src: url,
+				});
+			}
+		});
 	}
 
 	load() {
-		const {
-			imgKey,
-			path,
-			body,
-			contentType,
-			level,
-			track,
-			identityId,
-		} = this.props;
+		const { imgKey, path, body, contentType, level, track, identityId } =
+			this.props;
 		if (!imgKey && !path) {
-			logger.debug('empty imgKey and path');
 			return;
 		}
 
 		const that = this;
 		const key = imgKey || path;
-		logger.debug('loading ' + key + '...');
+
 		if (body) {
 			const type = contentType || 'binary/octet-stream';
 			if (!Storage || typeof Storage.put !== 'function') {
@@ -114,12 +108,9 @@ export class S3Image extends React.Component<IS3ImageProps, IS3ImageState> {
 				level: level ? level : 'public',
 				track,
 			});
-			ret
-				.then(data => {
-					logger.debug(data);
-					that.getImageSource(key, level, track, identityId);
-				})
-				.catch(err => logger.debug(err));
+			ret.then(data => {
+				that.getImageSource(key, level, track, identityId);
+			});
 		} else {
 			that.getImageSource(key, level, track, identityId);
 		}
@@ -162,13 +153,10 @@ export class S3Image extends React.Component<IS3ImageProps, IS3ImageState> {
 			level: level ? level : 'public',
 			contentType: type,
 			track,
-		})
-			.then(data => {
-				logger.debug('handle pick data', data);
-				that.getImageSource(key, level, track, identityId);
-				if (onUploadSuccess) onUploadSuccess();
-			})
-			.catch(err => logger.debug('handle pick error', err));
+		}).then(data => {
+			that.getImageSource(key, level, track, identityId);
+			if (onUploadSuccess) onUploadSuccess();
+		});
 	}
 
 	handleClick(evt) {

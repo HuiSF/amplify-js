@@ -44,7 +44,6 @@ export class AmazonAIConvertPredictionsProvider extends AbstractConvertPredictio
 	protected async translateText(
 		input: TranslateTextInput
 	): Promise<TranslateTextOutput> {
-		logger.debug('Starting translation');
 		const {
 			translateText: {
 				defaults: { sourceLanguage = '', targetLanguage = '' } = {},
@@ -150,7 +149,6 @@ export class AmazonAIConvertPredictionsProvider extends AbstractConvertPredictio
 		input: SpeechToTextInput
 	): Promise<SpeechToTextOutput> {
 		try {
-			logger.debug('starting transcription..');
 			const credentials = await Credentials.get();
 			if (!credentials) {
 				return Promise.reject('No credentials');
@@ -231,7 +229,6 @@ export class AmazonAIConvertPredictionsProvider extends AbstractConvertPredictio
 							decodedMessage =
 								transcribeMessageJson.Transcript.Results[0].Alternatives[0]
 									.Transcript + '\n';
-							logger.debug({ decodedMessage });
 						} else {
 							logger.debug({
 								transcript:
@@ -254,29 +251,25 @@ export class AmazonAIConvertPredictionsProvider extends AbstractConvertPredictio
 			let fullText = '';
 			connection.onmessage = message => {
 				try {
-					const decodedMessage = AmazonAIConvertPredictionsProvider.serializeDataFromTranscribe(
-						message
-					);
+					const decodedMessage =
+						AmazonAIConvertPredictionsProvider.serializeDataFromTranscribe(
+							message
+						);
 					if (decodedMessage) {
 						fullText += decodedMessage + ' ';
 					}
 				} catch (err) {
-					logger.debug(err);
 					rej(err.message);
 				}
 			};
 
 			connection.onerror = errorEvent => {
-				logger.debug({ errorEvent });
 				rej('failed to transcribe, network error');
 			};
 
 			connection.onclose = closeEvent => {
-				logger.debug({ closeEvent });
 				return res(fullText.trim());
 			};
-
-			logger.debug({ raw });
 
 			if (Array.isArray(raw)) {
 				for (let i = 0; i < raw.length - 1023; i += 1024) {
@@ -395,12 +388,10 @@ export class AmazonAIConvertPredictionsProvider extends AbstractConvertPredictio
 				languageCode,
 			});
 
-			logger.debug('connecting...');
 			const connection = new WebSocket(signedUrl);
 
 			connection.binaryType = 'arraybuffer';
 			connection.onopen = () => {
-				logger.debug('connected');
 				res(connection);
 			};
 		});

@@ -32,13 +32,11 @@ export class AmplifyClass {
 	ServiceWorker = null;
 
 	register(comp) {
-		logger.debug('component registered in amplify', comp);
 		this._components.push(comp);
 		if (typeof comp.getModuleName === 'function') {
 			this._modules[comp.getModuleName()] = comp;
 			this[comp.getModuleName()] = comp;
 		} else {
-			logger.debug('no getModuleName method for component', comp);
 		}
 
 		// Finally configure this new component(category) loaded
@@ -54,7 +52,6 @@ export class AmplifyClass {
 		if (!config) return this._config;
 
 		this._config = Object.assign(this._config, config);
-		logger.debug('amplify config', this._config);
 
 		// Dependency Injection via property-setting.
 		// This avoids introducing a public method/interface/setter that's difficult to remove later.

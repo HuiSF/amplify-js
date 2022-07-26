@@ -43,7 +43,7 @@ export class InMemoryCacheClass extends StorageCache implements ICache {
 			? Object.assign({}, defaultConfig, config)
 			: defaultConfig;
 		super(cacheConfig);
-		logger.debug('now we start!');
+
 		this.cacheList = [];
 		this.curSizeInBytes = 0;
 		this.maxPriority = 5;

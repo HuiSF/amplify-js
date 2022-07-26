@@ -40,10 +40,11 @@ import {
 import { v1 as uuid } from 'uuid';
 import EventsBuffer from './EventBuffer';
 
-const AMPLIFY_SYMBOL = (typeof Symbol !== 'undefined' &&
-typeof Symbol.for === 'function'
-	? Symbol.for('amplify_default')
-	: '@@amplify_default') as Symbol;
+const AMPLIFY_SYMBOL = (
+	typeof Symbol !== 'undefined' && typeof Symbol.for === 'function'
+		? Symbol.for('amplify_default')
+		: '@@amplify_default'
+) as Symbol;
 
 const dispatchAnalyticsEvent = (event, data) => {
 	Hub.dispatch('analytics', { event, data }, 'Analytics', AMPLIFY_SYMBOL);
@@ -115,7 +116,6 @@ export class AWSPinpointProvider implements AnalyticsProvider {
 	 * @param {Object} config - configuration
 	 */
 	public configure(config): object {
-		logger.debug('configure Analytics', config);
 		const conf = config || {};
 		this._config = Object.assign({}, this._config, conf);
 
@@ -128,13 +128,10 @@ export class AWSPinpointProvider implements AnalyticsProvider {
 				const cacheKey = this.getProviderName() + '_' + this._config.appId;
 				this._getEndpointId(cacheKey)
 					.then(endpointId => {
-						logger.debug('setting endpoint id from the cache', endpointId);
 						this._config.endpointId = endpointId;
 						dispatchAnalyticsEvent('pinpointProvider_configured', null);
 					})
-					.catch(err => {
-						logger.debug('Failed to generate endpointId', err);
-					});
+					.catch(err => {});
 			} else {
 				dispatchAnalyticsEvent('pinpointProvider_configured', null);
 			}
@@ -149,7 +146,6 @@ export class AWSPinpointProvider implements AnalyticsProvider {
 	 * @param {Object} params - the params of an event
 	 */
 	public async record(params: EventParams, handlers: PromiseHandlers) {
-		logger.debug('_public record', params);
 		const credentials = await this._getCredentials();
 		if (!credentials || !this._config.appId || !this._config.region) {
 			logger.debug(
@@ -309,7 +305,6 @@ export class AWSPinpointProvider implements AnalyticsProvider {
 				},
 			} = data;
 			if (ACCEPTED_CODES.includes(StatusCode)) {
-				logger.debug('record event success. ', data);
 				return handlers.resolve(data);
 			} else {
 				if (RETRYABLE_CODES.includes(StatusCode)) {
@@ -384,7 +379,6 @@ export class AWSPinpointProvider implements AnalyticsProvider {
 			);
 			this._pinpointPutEvents(params, handlers);
 		} else {
-			logger.debug(`retry times used up for event ${params.eventName}`);
 		}
 	}
 
@@ -413,7 +407,6 @@ export class AWSPinpointProvider implements AnalyticsProvider {
 			);
 			const data = await this.pinpointClient.send(command);
 
-			logger.debug('updateEndpoint success', data);
 			this._endpointGenerating = false;
 			this._resumeBuffer();
 
@@ -433,8 +426,6 @@ export class AWSPinpointProvider implements AnalyticsProvider {
 	private async _handleEndpointUpdateFailure(failureData: EndpointFailureData) {
 		const { err, endpointObject } = failureData;
 		const statusCode = err.$metadata && err.$metadata.httpStatusCode;
-
-		logger.debug('updateEndpoint error', err);
 
 		switch (statusCode) {
 			case FORBIDDEN_CODE:
@@ -466,7 +457,6 @@ export class AWSPinpointProvider implements AnalyticsProvider {
 		endpointObject: EventObject,
 		exponential: boolean = false
 	) {
-		logger.debug('_retryEndpointUpdate', endpointObject);
 		const { params } = endpointObject;
 
 		// TODO: implement retry with exp back off once exp function is available
@@ -503,15 +493,12 @@ export class AWSPinpointProvider implements AnalyticsProvider {
 	 * Init the clients
 	 */
 	private async _initClients(credentials) {
-		logger.debug('init clients');
-
 		if (
 			this.pinpointClient &&
 			this._config.credentials &&
 			this._config.credentials.sessionToken === credentials.sessionToken &&
 			this._config.credentials.identityId === credentials.identityId
 		) {
-			logger.debug('no change for aws credentials, directly return from init');
 			return;
 		}
 
@@ -521,7 +508,7 @@ export class AWSPinpointProvider implements AnalyticsProvider {
 
 		this._config.credentials = credentials;
 		const { region } = this._config;
-		logger.debug('init clients with credentials', credentials);
+
 		this.pinpointClient = new PinpointClient({
 			region,
 			credentials,
@@ -727,10 +714,8 @@ export class AWSPinpointProvider implements AnalyticsProvider {
 			const credentials = await Credentials.get();
 			if (!credentials) return null;
 
-			logger.debug('set credentials for analytics', credentials);
 			return Credentials.shear(credentials);
 		} catch (err) {
-			logger.debug('ensure credentials error', err);
 			return null;
 		}
 	}

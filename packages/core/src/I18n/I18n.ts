@@ -52,8 +52,6 @@ export class I18n {
 		) {
 			this._lang = window.navigator.language;
 		}
-
-		logger.debug(this._lang);
 	}
 
 	/**
