@@ -234,6 +234,7 @@ function buildES6(typeScriptCompiler, watchMode) {
 		// temporary fix
 		types: ['node'],
 		outDir: pkgTscES6OutDir,
+		importHelpers: true,
 	};
 
 	if (watchMode) {

@@ -32,7 +32,12 @@ export {
 } from '@aws-amplify/analytics';
 
 export { Auth } from '@aws-amplify/auth';
-export { Storage, StorageClass } from '@aws-amplify/storage';
+export {
+	Storage,
+	StorageClass,
+	AWSS3Container,
+	AwsS3Put,
+} from '@aws-amplify/storage';
 export { API, APIClass, graphqlOperation } from '@aws-amplify/api';
 export {
 	AuthModeStrategyType,

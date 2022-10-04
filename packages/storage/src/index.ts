@@ -57,3 +57,6 @@ export default Storage;
 export { StorageClass };
 export * from './providers';
 export * from './types';
+
+export { AWSS3Container } from './providers/AWSS3Container';
+export { AwsS3Put  } from './providers/AWSS3Put';
