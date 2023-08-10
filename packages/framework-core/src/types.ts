@@ -59,3 +59,13 @@ export interface CreateAmplifyServerContextInput {
 	 */
 	cookiesStorageAdapter?: CookiesStorageAdapter;
 }
+
+export interface RunWithAmplifyServerContext {
+	<Result>(
+		input: CreateAmplifyServerContextInput & {
+			operation: (
+				contextSpec: AmplifyServerContextSpec
+			) => Result | void | Promise<Result | void>;
+		}
+	): Promise<Result | void>;
+}

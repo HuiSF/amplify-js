@@ -1,5 +1,2 @@
-export {
-	createAmplifyServerContext,
-	getAmplifyServerContext,
-	destroyAmplifyServerContext,
-} from './serverContext';
+export { getAmplifyServerContext } from './serverContext';
+export { runWithAmplifyServerContext } from './runWithAmplifyServerContext';
