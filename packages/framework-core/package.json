@@ -8,6 +8,7 @@
   },
   "description": "The core logic shared by framework helpers for interaction with Amplify APIs in frameworks suchs as Next.js etc..",
   "devDependencies": {
+    "@aws-amplify/auth": "6.0.0",
     "@aws-amplify/core": "6.0.0",
     "typescript": "5.1.6"
   },
@@ -64,6 +65,7 @@
   "module": "./lib-esm/index.js",
   "name": "@aws-amplify/framework-core",
   "peerDependencies": {
+    "@aws-amplify/auth": "6.0.0",
     "@aws-amplify/core": "^6.0.0"
   },
   "private": true,
