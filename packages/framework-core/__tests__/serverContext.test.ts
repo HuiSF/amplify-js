@@ -3,7 +3,7 @@ import {
 	createAmplifyServerContext,
 	getAmplifyServerContext,
 	destroyAmplifyServerContext,
-} from '../src';
+} from '../src/serverContext';
 import { CookiesStorageAdapter } from '../src/types';
 
 const mockConfigure = jest.fn();
