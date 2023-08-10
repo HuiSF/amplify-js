@@ -134,6 +134,8 @@ export {
 	StorageAccessLevel,
 	StorageConfig,
 	GetCredentialsOptions,
+	ResourcesConfig,
+	LibraryOptions,
 } from './singleton/types';
 
 // AWSClients exports
@@ -144,8 +146,11 @@ export {
 	GetCredentialsForIdentityOutput,
 } from './AwsClients/CognitoIdentity';
 
-export { AmplifyV6, fetchAuthSession } from './singleton';
-export { LibraryOptions, ResourcesConfig } from './singleton/types';
+export {
+	AmplifyV6,
+	fetchAuthSession,
+	AmplifyClass as AmplifyClassV6,
+} from './singleton';
 
 // Standard `Cache` export to maintain interoperability with React Native
 export { BrowserStorageCache as Cache };
