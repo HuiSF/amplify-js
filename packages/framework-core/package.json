@@ -1,0 +1,88 @@
+{
+  "author": "Amazon Web Services",
+  "bugs": {
+    "url": "https://github.com/aws/aws-amplify/issues"
+  },
+  "dependencies": {
+    "@types/cookie": "0.5.1"
+  },
+  "description": "The core logic shared by framework helpers for interaction with Amplify APIs in frameworks suchs as Next.js etc..",
+  "devDependencies": {
+    "@aws-amplify/core": "6.0.0",
+    "@types/sinon": "^7.5.1",
+    "typescript": "5.1.6"
+  },
+  "files": [
+    "lib",
+    "lib-esm",
+    "src"
+  ],
+  "homepage": "https://aws-amplify.github.io/",
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "dist",
+      "lib",
+      "lib-esm"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    },
+    "globals": {
+      "ts-jest": {
+        "diagnostics": {
+          "pathRegex": "(/__tests__/.*|\\.(test|spec))\\.(tsx?|jsx?)$"
+        },
+        "tsConfig": false
+      }
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json",
+      "jsx"
+    ],
+    "testEnvironment": "jsdom",
+    "testPathIgnorePatterns": [
+      "xmlParser-fixture.ts",
+      "testUtils",
+      "cases"
+    ],
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(tsx?|jsx?)$",
+    "testURL": "http://localhost/",
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)$": "ts-jest"
+    }
+  },
+  "license": "Apache-2.0",
+  "main": "./lib/index.js",
+  "module": "./lib-esm/index.js",
+  "name": "@aws-amplify/framework-core",
+  "peerDependencies": {
+    "@aws-amplify/core": "^6.0.0"
+  },
+  "private": true,
+  "scripts": {
+    "build": "npm run clean && npm run build:esm && npm run build:cjs",
+    "build-with-test": "npm test && npm run build",
+    "build:cjs": "rimraf lib && tsc -m commonjs --outDir lib && webpack && webpack --config ./webpack.config.dev.js",
+    "build:cjs:watch": "rimraf lib && tsc -m commonjs --outDir lib --watch",
+    "build:esm": "rimraf lib-esm && tsc -m esnext --outDir lib-esm",
+    "build:esm:watch": "rimraf lib-esm && tsc -m esnext --outDir lib-esm --watch",
+    "clean": "npm run clean:size && rimraf lib-esm lib dist",
+    "clean:size": "rimraf dual-publish-tmp tmp*",
+    "format": "echo \"Not implemented\"",
+    "lint": "tslint 'src/**/*.ts'  && npm run ts-coverage",
+    "test": "npm run lint && jest -w 1 --coverage",
+    "test:size": "size-limit",
+    "ts-coverage": "typescript-coverage-report -p ./tsconfig.build.json -t 90.31"
+  },
+  "typings": "./lib-esm/index.d.ts",
+  "version": "0.0.1"
+}
