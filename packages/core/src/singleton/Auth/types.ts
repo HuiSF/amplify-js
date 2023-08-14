@@ -54,7 +54,7 @@ export interface AWSCredentialsAndIdentityIdProvider {
 export type TokenProvider = {
 	getTokens: ({
 		forceRefresh,
-	}: {
+	}?: {
 		forceRefresh?: boolean;
 	}) => Promise<AuthTokens | null>;
 };
