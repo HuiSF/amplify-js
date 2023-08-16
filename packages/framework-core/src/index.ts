@@ -8,4 +8,5 @@ export {
 	createAWSCredentialsAndIdentityIdProvider,
 	createUserPoolsTokenProvider,
 } from './authProviders/cognito';
-export { AmplifyServerContextSpec } from './types';
+export { AmplifyServerContextError } from './error';
+export { AmplifyServerContextSpec, CookieStorage } from './types';

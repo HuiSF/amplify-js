@@ -1,0 +1,1 @@
+export { getAmplifyConfig } from './getAmplifyConfig';
