@@ -5,6 +5,7 @@ import {
 	KeyValueStorageInterface,
 	MemoryKeyValueStorage,
 	FetchAuthSessionOptions,
+	AuthConfig,
 } from '@aws-amplify/core';
 import { DefaultTokenStore } from './TokenStore';
 import { TokenOrchestrator } from './TokenOrchestrator';
@@ -25,6 +26,10 @@ export const CognitoUserPoolsTokenProvider: CognitoUserPoolTokenProviderType = {
 	},
 	setKeyValueStorage: (keyValueStorage: KeyValueStorageInterface): void => {
 		authTokenStore.setKeyValueStorage(keyValueStorage);
+	},
+	setAuthConfig: (authConfig: AuthConfig) => {
+		authTokenStore.setAuthConfig(authConfig);
+		tokenOrchestrator.setAuthConfig(authConfig);
 	},
 };
 

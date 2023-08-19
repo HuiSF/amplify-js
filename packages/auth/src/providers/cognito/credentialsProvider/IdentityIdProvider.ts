@@ -42,7 +42,7 @@ export async function cognitoIdentityIdProvider({
 			return identityId.id;
 		} else {
 			const logins = tokens.idToken
-				? formLoginsMap(tokens.idToken.toString(), 'COGNITO')
+				? formLoginsMap(tokens.idToken.toString(), 'COGNITO', authConfig)
 				: {};
 			const generatedIdentityId = await generateIdentityId(logins, authConfig);
 
