@@ -1,0 +1,19 @@
+import { ResourcesConfig } from '@aws-amplify/core';
+import { AmplifyServerContextError } from '@aws-amplify/core/internals/adapter-core';
+
+export const getAmplifyConfig = (): ResourcesConfig => {
+	const configStr = process.env.amplifyConfig;
+
+	if (!configStr) {
+		throw new AmplifyServerContextError({
+			message: 'Amplify configuration is missing from `process.env`.',
+			recoverySuggestion:
+				'Ensure to use `withAmplify` function in your `next.config.js`.',
+		});
+	}
+
+	const configObject = JSON.parse(configStr);
+
+	// TODO(HuiSF): adds ResourcesConfig validation when it has one.
+	return configObject;
+};
