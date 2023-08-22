@@ -37,6 +37,11 @@
       "import": "./lib-esm/analytics/pinpoint/index.js",
       "require": "./lib/analytics/pinpoint/index.js"
     },
+    "./internals/adapter-core": {
+      "types": "./lib-esm/adapterCore/index.d.ts",
+      "import": "./lib-esm/adapterCore/index.js",
+      "require": "./lib/adapterCore/index.js"
+    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
