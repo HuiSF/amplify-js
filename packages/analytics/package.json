@@ -69,7 +69,7 @@
 		"lib",
 		"lib-esm",
 		"src",
-		"**/package.json"
+		"pinpoint"
 	],
 	"dependencies": {
 		"@aws-sdk/client-firehose": "3.388.0",
