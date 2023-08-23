@@ -4,8 +4,9 @@ import {
 	AmplifyServerContextError,
 	CookieStorage,
 } from '@aws-amplify/core/internals/adapter-core';
+import { IncomingMessage, ServerResponse } from 'http';
 
-const DATE_IN_THE_PAST = new Date(0);
+export const dateInThePast = new Date(0);
 
 export const createCookieStorageAdapterFromNextServerContext = (
 	context: NextServer.Context
@@ -14,7 +15,7 @@ export const createCookieStorageAdapterFromNextServerContext = (
 		| NextServer.NextRequestAndNextResponseContext
 		| NextServer.NextRequestAndResponseContext;
 
-	if (request && response) {
+	if (request && response && request instanceof NextRequest) {
 		if (response instanceof NextResponse) {
 			return createCookieStorageAdapterFromNextRequestAndNextResponse(
 				request,
@@ -39,7 +40,12 @@ export const createCookieStorageAdapterFromNextServerContext = (
 	const { request: req, response: res } =
 		context as NextServer.GetServerSidePropsContext;
 
-	if (req && res) {
+	if (
+		req &&
+		res &&
+		req instanceof IncomingMessage &&
+		res instanceof ServerResponse
+	) {
 		return createCookieStorageAdapterFromGetServerSidePropsContext(req, res);
 	}
 
@@ -141,13 +147,13 @@ const createCookieStorageAdapterFromGetServerSidePropsContext = (
 		set(name, value, options) {
 			response.setHeader(
 				'Set-Cookie',
-				`${name}=${value};${options && serializeSetCookieOptions(options)}`
+				`${name}=${value};${options ? serializeSetCookieOptions(options) : ''}`
 			);
 		},
 		delete(name) {
 			response.setHeader(
 				'Set-Cookie',
-				`${name}=;Expires=${DATE_IN_THE_PAST.toUTCString()}`
+				`${name}=;Expires=${dateInThePast.toUTCString()}`
 			);
 		},
 	};
@@ -162,13 +168,13 @@ const createMutableCookieStoreFromHeaders = (
 	const setFunc: CookieStorage.Adapter['set'] = (name, value, options) => {
 		headers.append(
 			'Set-Cookie',
-			`${name}=${value};${options && serializeSetCookieOptions(options)}`
+			`${name}=${value};${options ? serializeSetCookieOptions(options) : ''}`
 		);
 	};
 	const deleteFunc: CookieStorage.Adapter['delete'] = name => {
 		headers.append(
 			'Set-Cookie',
-			`${name}=;Expires=${DATE_IN_THE_PAST.toUTCString()}`
+			`${name}=;Expires=${dateInThePast.toUTCString()}`
 		);
 	};
 	return {
@@ -180,22 +186,22 @@ const createMutableCookieStoreFromHeaders = (
 const serializeSetCookieOptions = (
 	options: CookieStorage.SetCookieOptions
 ): string => {
-	const { expires, maxAge, domain, httpOnly, sameSite } = options;
+	const { expires, maxAge, domain, httpOnly, sameSite, secure } = options;
 	const serializedOptions: string[] = [];
-	if (expires) {
-		serializedOptions.push(`Expires=${expires.toUTCString()}`);
-	}
-	if (maxAge) {
-		serializedOptions.push(`Max-Age=${maxAge}`);
-	}
 	if (domain) {
 		serializedOptions.push(`Domain=${domain}`);
+	}
+	if (expires) {
+		serializedOptions.push(`Expires=${expires.toUTCString()}`);
 	}
 	if (httpOnly) {
 		serializedOptions.push(`HttpOnly`);
 	}
 	if (sameSite) {
 		serializedOptions.push(`SameSite=${sameSite}`);
+	}
+	if (secure) {
+		serializedOptions.push(`Secure`);
 	}
 	return serializedOptions.join(';');
 };
