@@ -26,6 +26,7 @@ export {
 	StorageAccessLevel,
 	StorageConfig,
 	GetCredentialsOptions,
+	LegacyConfig,
 	ResourcesConfig,
 	LibraryOptions,
 	AnalyticsConfig,
