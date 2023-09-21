@@ -13,11 +13,6 @@ import {
 } from '@aws-amplify/core/internals/utils';
 import { cacheCognitoTokens } from '../tokenProvider/cacheTokens';
 import { CognitoUserPoolsTokenProvider } from '../tokenProvider';
-import {
-	generateChallenge,
-	generateRandom,
-	generateState,
-} from '../utils/signInWithRedirectHelpers';
 import { cognitoHostedUIIdentityProviderMap } from '../types/models';
 import { DefaultOAuthStore } from '../utils/signInWithRedirectStore';
 import { AuthError } from '../../../errors/AuthError';
@@ -26,6 +21,7 @@ import { AuthErrorCodes } from '../../../common/AuthErrorStrings';
 import { authErrorMessages } from '../../../Errors';
 import { assertUserNotAuthenticated } from '../utils/signInHelpers';
 import { SignInWithRedirectInput } from '../types';
+import { generateCodeVerifier, generateState } from '../utils/oauth';
 
 const SELF = '_self';
 
@@ -73,7 +69,7 @@ function oauthSignIn({
 	clientId: string;
 	customState?: string;
 }) {
-	const generatedState = generateState(32);
+	const randomState = generateState();
 
 	/* encodeURIComponent is not URL safe, use urlSafeEncode instead. Cognito 
 	single-encodes/decodes url on first sign in and double-encodes/decodes url
@@ -82,19 +78,14 @@ function oauthSignIn({
 	for parsing query params. 
 	Refer: https://github.com/aws-amplify/amplify-js/issues/5218 */
 	const state = customState
-		? `${generatedState}-${urlSafeEncode(customState)}`
-		: generatedState;
+		? `${randomState}-${urlSafeEncode(customState)}`
+		: randomState;
+	const codeVerifier = generateCodeVerifier(128);
+	const scopesString = oauthConfig.scopes.join(' ');
 
 	store.storeOAuthInFlight(true);
 	store.storeOAuthState(state);
-
-	const pkce_key = generateRandom(128);
-	store.storePKCE(pkce_key);
-
-	const code_challenge = generateChallenge(pkce_key);
-	const code_challenge_method = 'S256';
-
-	const scopesString = oauthConfig.scopes.join(' ');
+	store.storePKCE(codeVerifier.value);
 
 	const queryString = Object.entries({
 		redirect_uri: oauthConfig.redirectSignIn[0], // TODO(v6): add logic to identity the correct url
@@ -103,8 +94,10 @@ function oauthSignIn({
 		identity_provider: provider,
 		scope: scopesString,
 		state,
-		...(oauthConfig.responseType === 'code' ? { code_challenge } : {}),
-		...(oauthConfig.responseType === 'code' ? { code_challenge_method } : {}),
+		...(oauthConfig.responseType === 'code' && {
+			code_challenge: codeVerifier.toCodeChallenge(),
+			code_challenge_method: codeVerifier.method,
+		}),
 	})
 		.map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
 		.join('&');

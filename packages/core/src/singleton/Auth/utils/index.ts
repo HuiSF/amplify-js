@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { base64Decoder } from '../../../libraryUtils';
+import { base64Decoder } from '../../../utils/convert';
 import { asserts } from '../../../Util/errors/AssertError';
 
 import {
@@ -100,6 +100,8 @@ export function decodeJWT(token: string): JWT {
 			payload,
 		};
 	} catch (err) {
+		console.log(base64Decoder);
+		console.log(err);
 		throw new Error('Invalid token payload');
 	}
 }

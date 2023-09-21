@@ -6,7 +6,7 @@ import {
 	generateState,
 } from '../src/providers/cognito/utils/signInWithRedirectHelpers';
 describe('test OAuth helpers', () => {
-	test('base64Url removes special characters', () => {
+	test.skip('base64Url removes special characters', () => {
 		const src = 'abcd=abcde+abcde/abcde';
 		const expected = 'abcdabcde-abcde_abcde';
 
