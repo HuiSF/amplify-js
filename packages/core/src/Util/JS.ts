@@ -57,7 +57,7 @@ export const sortByField = (
 	}
 
 	const dirX = dir && dir === 'desc' ? -1 : 1;
-	list.sort(function(a, b) {
+	list.sort((a, b) => {
 		const a_val = a[field];
 		const b_val = b[field];
 
@@ -120,16 +120,6 @@ export const isTextFile = (contentType: string) => {
 		'application/xml' === type ||
 		'application/sh' === type
 	);
-};
-
-export const generateRandomString = () => {
-	let result = '';
-	const chars =
-		'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	for (let i = 32; i > 0; i -= 1) {
-		result += chars[Math.floor(Math.random() * chars.length)];
-	}
-	return result;
 };
 
 export const makeQuerablePromise = (promise: any) => {

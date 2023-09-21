@@ -1,5 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
+import { base64Decoder } from '../../../libraryUtils';
 import { asserts } from '../../../Util/errors/AssertError';
 
 import {
@@ -104,6 +105,6 @@ export function decodeJWT(token: string): JWT {
 }
 
 function base64ToBytes(base64: string): Uint8Array {
-	const binString = atob(base64);
+	const binString = base64Decoder.convert(base64);
 	return Uint8Array.from(binString, m => m.codePointAt(0) || 0);
 }

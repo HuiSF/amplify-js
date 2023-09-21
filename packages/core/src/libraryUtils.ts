@@ -9,7 +9,6 @@ utils for use throughout the library.
 export {
 	isBrowser,
 	filenameToContentType,
-	generateRandomString,
 	isEmpty,
 	isStrictObject,
 	isTextFile,
@@ -104,3 +103,6 @@ export {
 } from './Util/Constants';
 export { fetchAuthSession } from './singleton/apis/internal/fetchAuthSession';
 export { AMPLIFY_SYMBOL } from './Hub';
+export { base64Decoder, base64Encoder } from './utils/convert';
+export { getCrypto } from './utils/getGlobal';
+export { generateRandomString } from './utils/generateRandomString';
