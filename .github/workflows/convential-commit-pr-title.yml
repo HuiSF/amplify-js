@@ -13,10 +13,12 @@ jobs:
         with:
           path: amplify-js
       - name: Generate Regex and Check PR title
+        working-directory: ./amplify-js
         run: |
           pwd
           ls
           regex=$(./scripts/generate-conventional-commit-regex.sh)
+          echo "Conventional commit regex: $regex"
           pr_title="${{ github.event.pull_request.title }}"
           if [[ $pr_title =~ $regex ]]; then
             echo "✅ PR title '$pr_title' is valid"
