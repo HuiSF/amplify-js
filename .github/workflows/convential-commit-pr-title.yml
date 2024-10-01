@@ -14,6 +14,8 @@ jobs:
           path: amplify-js
       - name: Generate Regex and Check PR title
         run: |
+          pwd
+          ls
           regex=$(./scripts/generate-conventional-commit-regex.sh)
           pr_title="${{ github.event.pull_request.title }}"
           if [[ $pr_title =~ $regex ]]; then
