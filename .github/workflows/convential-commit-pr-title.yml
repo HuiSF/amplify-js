@@ -8,6 +8,10 @@ jobs:
   check-pr-title:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          path: amplify-js
       - name: Generate Regex and Check PR title
         run: |
           regex=$(./scripts/generate-conventional-commit-regex.sh)
