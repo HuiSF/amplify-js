@@ -1,0 +1,23 @@
+name: Conventional Commit PR Title
+description: Checks that PR titles follow the Conventional Commit format described in https://www.conventionalcommits.org
+
+on:
+  pull_request:
+    types: [opened, edited, reopened]
+
+jobs:
+  check-pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Regex and Check PR title
+        run: |
+          regex=$(./scripts/generate-conventional-commit-regex.sh)
+          pr_title="${{ github.event.pull_request.title }}"
+          if [[ $pr_title =~ $regex ]]; then
+            echo "✅ PR title '$pr_title' is valid"
+            exit 0
+          else
+            echo "❌ PR title '$pr_title' is invalid"
+            echo "It should match the pattern: $regex"
+            exit 1
+          fi
