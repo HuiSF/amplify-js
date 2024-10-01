@@ -1,5 +1,4 @@
 name: Conventional Commit PR Title
-description: Checks that PR titles follow the Conventional Commit format described in https://www.conventionalcommits.org
 
 on:
   pull_request:
