@@ -87,3 +87,4 @@ export {
 	AuthTokens,
 	JWT,
 } from '@aws-amplify/core';
+export type A = string;
