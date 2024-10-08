@@ -17,8 +17,9 @@ jobs:
       - name: Generate Regex and Check PR title
         working-directory: ./amplify-js
         run: |
+          set -euo pipefail
           regex=$(./scripts/generate-conventional-commit-regex.sh)
-          if [[ $PR_TITLE =~ $regex ]]; then
+          if [[ "$PR_TITLE" =~ $regex ]]; then
             echo "✅ PR title '$PR_TITLE' is valid"
             exit 0
           else
